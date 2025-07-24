@@ -10,6 +10,8 @@
 > git clone https://github.com/bufbuild/protoc-gen-validate.git
 > cd protoc-gen-validate && make build
 
+> go install github.com/pressly/goose/v3/cmd/goose@latest
+
 ### Structure
 All services organized in shared Go workspace.
 **auth** - authorization service

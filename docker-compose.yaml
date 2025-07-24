@@ -42,3 +42,33 @@ services:
             - ./configs/grafana/provisioning:/etc/grafana/provisioning
         ports:
             - 3300:3000
+    
+    db:
+        image: postgres:17.5
+        container_name: db
+        environment:
+            POSTGRES_USER: admin
+            POSTGRES_PASSWORD: pass
+            POSTGRES_DB: postgres
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "root"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        ports:
+            - 5432:5432
+
+    migration:
+        build: ./tools/goose
+        container_name: migration
+        command: ["up"]
+        volumes:
+            - ./migrations:/migrations
+        environment:
+            GOOSE_DRIVER: postgres
+            GOOSE_DBSTRING: "host=db port=5432 user=admin password=pass dbname=postgres sslmode=disable"
+            AUTH_USER: auth_user
+            AUTH_PASS: auth_pass
+        depends_on:
+            db:
+                condition: service_healthy
