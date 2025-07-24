@@ -21,7 +21,7 @@ func main() {
 	telemetry.MustInitTracer(context.Background(), res, cfg.Telemetry.TraceEndpoint)
 	telemetry.MustInitMeter(context.Background(), res, cfg.Telemetry.MetricsEndpoint)
 
-	application := app.New(cfg.GRPC)
+	application := app.New(cfg.GRPC, cfg.TokenTTL)
 	go application.MustRun()
 
 	stop := make(chan os.Signal, 1)
