@@ -4,4 +4,4 @@ silent: true
 
 includes:
   protos: ./protos/Taskfile.yaml
-  protos: ./auth/Taskfile.yaml
+  auth: ./auth/Taskfile.yaml

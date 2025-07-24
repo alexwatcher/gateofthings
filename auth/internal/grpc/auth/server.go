@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	authv1 "github.com/alexwatcher/gateofthings/protos/gen/go/auth"
+	authv1 "github.com/alexwatcher/gateofthings/protos/gen/go/auth/v1"
 	"google.golang.org/grpc"
 )
 

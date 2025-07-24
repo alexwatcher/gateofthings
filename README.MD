@@ -1,9 +1,33 @@
-###  Gate Of Things
+# Gate Of Things
 
-go install github.com/go-task/task/v3/cmd/task@latest
+### Tools
 
-# Protobuf for Go
+> brew install protobuf
+> go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+> go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+> go install github.com/go-task/task/v3/cmd/task@latest
 
-brew install protobuf
-go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+> git clone https://github.com/bufbuild/protoc-gen-validate.git
+> cd protoc-gen-validate && make build
+
+### Structure
+All services organized in shared Go workspace.
+**auth** - authorization service
+**shared** - library of common code and data structures
+**protos** - protobuf and grps definitions
+**configs** - configuration files for dependencies (OTL collector, Loki, Tempo, Prometheus, Grafana)
+
+### Local setup
+Local development and testing are powered by Docker Compose, which orchestrates all necessary services and dependencies.
+
+> docker compose up -d
+
+> docker compose down -v
+
+### Tasks
+The project uses Task as a task runner to automate common development workflows, such as generating protobuf code.
+Root direcotry has Task file which include all subprojects.
+
+To work with protobufs use following commands:
+> task protos:gen
+> task protos:clr
