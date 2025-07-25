@@ -30,7 +30,7 @@ services:
             - ./configs/tempo-config.yaml:/etc/tempo-config.yaml
     
     prometheus:
-        image: prom/prometheus:v3.5.0-rc.0
+        image: prom/prometheus:v3.5.0
         container_name: prometheus
         volumes:
             - "./configs/prometheus-config.yaml:/etc/prometheus/prometheus.yml"
@@ -43,9 +43,9 @@ services:
         ports:
             - 3300:3000
     
-    db:
+    postgres:
         image: postgres:17.5
-        container_name: db
+        container_name: postgres
         environment:
             POSTGRES_USER: admin
             POSTGRES_PASSWORD: pass
@@ -66,9 +66,22 @@ services:
             - ./migrations:/migrations
         environment:
             GOOSE_DRIVER: postgres
-            GOOSE_DBSTRING: "host=db port=5432 user=admin password=pass dbname=postgres sslmode=disable"
+            GOOSE_DBSTRING: "host=postgres port=5432 user=admin password=pass dbname=postgres sslmode=disable"
+            METRICS_USER: metrics_user
+            METRICS_PASS: metrics_pass
             AUTH_USER: auth_user
             AUTH_PASS: auth_pass
         depends_on:
-            db:
+            postgres:
+                condition: service_healthy
+
+    postgres-exporter:
+        image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1
+        container_name: postgres-exporter
+        environment:
+            DATA_SOURCE_URI: postgres:5432/postgres?sslmode=disable
+            DATA_SOURCE_USER: metrics_user
+            DATA_SOURCE_PASS: metrics_pass
+        depends_on:
+            postgres:
                 condition: service_healthy
