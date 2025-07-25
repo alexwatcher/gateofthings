@@ -2,15 +2,19 @@
 
 ### Tools
 
-> brew install protobuf
-> go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-> go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-> go install github.com/go-task/task/v3/cmd/task@latest
+```
+brew install protobuf
 
-> git clone https://github.com/bufbuild/protoc-gen-validate.git
-> cd protoc-gen-validate && make build
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
-> go install github.com/pressly/goose/v3/cmd/goose@latest
+go install github.com/go-task/task/v3/cmd/task@latest
+
+git clone https://github.com/bufbuild/protoc-gen-validate.git
+cd protoc-gen-validate && make build
+
+go install github.com/pressly/goose/v3/cmd/goose@latest
+```
 
 ### Structure
 All services organized in shared Go workspace.
