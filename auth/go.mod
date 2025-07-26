@@ -11,6 +11,7 @@ require (
 	github.com/alexwatcher/gateofthings/shared v0.0.0-00010101000000-000000000000
 	github.com/caarlos0/env/v11 v11.3.1
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
+	golang.org/x/crypto v0.39.0
 	google.golang.org/grpc v1.73.0
 )
 
@@ -19,6 +20,7 @@ require (
 	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/golang-jwt/jwt/v5 v5.2.3 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.1 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect

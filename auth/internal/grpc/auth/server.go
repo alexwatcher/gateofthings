@@ -10,7 +10,7 @@ import (
 )
 
 type Auth interface {
-	Register(ctx context.Context, email string, password string) (err error)
+	Register(ctx context.Context, email string, password string) (id string, err error)
 	Login(ctx context.Context, login string, password string) (token string, err error)
 }
 
@@ -24,11 +24,11 @@ func Register(gRPC *grpc.Server, auth Auth) {
 }
 
 func (s *serverAPI) Register(ctx context.Context, req *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
-	err := s.auth.Register(ctx, req.Email, req.Password)
+	id, err := s.auth.Register(ctx, req.Email, req.Password)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &authv1.RegisterResponse{}, nil
+	return &authv1.RegisterResponse{Id: id}, nil
 }
 
 func (s *serverAPI) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
