@@ -19,8 +19,8 @@ type Auth struct {
 }
 
 type UserRepo interface {
-	InsertUser(ctx context.Context, email string, passhash []byte) (string, error)
-	SelectUser(ctx context.Context, email string) (models.User, error)
+	Insert(ctx context.Context, email string, passhash []byte) (string, error)
+	Get(ctx context.Context, email string) (models.User, error)
 }
 
 // NewAuth initializes a new instance of the Auth service with the given repository and
@@ -43,9 +43,8 @@ func (s Auth) Register(ctx context.Context, email string, password string) (stri
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
-	id, err := s.repo.InsertUser(ctx, email, hash)
+	id, err := s.repo.Insert(ctx, email, hash)
 	if err != nil {
-
 		log.Error("failed to insert user", "error", err)
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
@@ -61,11 +60,11 @@ func (s Auth) Login(ctx context.Context, login string, password string) (string,
 	log := slog.With("op", op, "login", login)
 
 	log.Info("logging in user")
-	user, err := s.repo.SelectUser(ctx, login)
+	user, err := s.repo.Get(ctx, login)
 	if err != nil {
 		if errors.Is(err, repository.ErrUserNotFound) {
 			log.Error("user not found", "error", err)
-			return "", models.ErrInvalidCredentials
+			return "", repository.ErrUserNotFound
 		}
 
 		log.Error("failed to select user", "error", err)

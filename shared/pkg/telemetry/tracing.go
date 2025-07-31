@@ -108,6 +108,6 @@ func MustInitLogger(ctx context.Context, res *resource.Resource, logsEndpoint st
 	)
 	global.SetLoggerProvider(lp)
 
-	logger := otelslog.NewLogger("service")
+	logger := otelslog.NewLogger("sys")
 	slog.SetDefault(logger)
 }

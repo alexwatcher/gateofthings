@@ -10,10 +10,12 @@ import (
 	"github.com/alexwatcher/gateofthings/auth/internal/app"
 	"github.com/alexwatcher/gateofthings/auth/internal/config"
 	"github.com/alexwatcher/gateofthings/auth/internal/consts"
+	"github.com/alexwatcher/gateofthings/auth/internal/migrator/postgresql"
 	"github.com/alexwatcher/gateofthings/shared/pkg/telemetry"
 )
 
 func main() {
+	ctx := context.Background()
 	cfg := config.MustLoad()
 
 	res := telemetry.MustCreateResource(consts.ServiceName, consts.ServiceVersion, cfg.Env)
@@ -21,7 +23,11 @@ func main() {
 	telemetry.MustInitTracer(context.Background(), res, cfg.Telemetry.TraceEndpoint)
 	telemetry.MustInitMeter(context.Background(), res, cfg.Telemetry.MetricsEndpoint)
 
-	application := app.New(cfg.GRPC, cfg.TokenTTL)
+	slog.Info("start migration")
+	postgresql.Migrate(cfg.Database)
+	slog.Info("end migration")
+
+	application := app.New(ctx, cfg.GRPC, cfg.Database, cfg.TokenTTL)
 	go application.MustRun()
 
 	stop := make(chan os.Signal, 1)

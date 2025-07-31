@@ -14,10 +14,11 @@ type TelemetryConfig struct {
 }
 
 type DatabaseConfig struct {
-	Host     string `env:"HOST" envDefault:"localhost"`
-	Port     int    `env:"PORT" envDefault:"5432"`
-	SSLMode  bool   `env:"SSL" envDefault:"false"`
-	Name     string `env:"NAME,required"`
-	User     string `env:"USER,required,unset"`
-	Password string `env:"PASSWORD,required,unset"`
+	Host       string `env:"HOST" envDefault:"localhost"`
+	Port       int    `env:"PORT" envDefault:"5432"`
+	SSLMode    bool   `env:"SSL" envDefault:"false"`
+	Name       string `env:"NAME,required"`
+	User       string `env:"USER,required,unset"`
+	Password   string `env:"PASSWORD,required,unset"`
+	Migrations string `env:"MIGRATIONS,required"`
 }
