@@ -3,7 +3,7 @@ package config
 import "time"
 
 type GRPCConfig struct {
-	Port    int           `env:"PORT,required"`
+	Port    uint16        `env:"PORT,required"`
 	Timeout time.Duration `env:"TIMEOUT,required"`
 }
 

@@ -4,4 +4,19 @@ silent: true
 
 includes:
   protos: ./protos/Taskfile.yaml
-  auth: ./auth/Taskfile.yaml
+
+tasks:
+  build_test_auth:
+    dir: "{{.TASKFILE_DIR}}"
+    desc: Build Auth test image
+    cmds:
+    - |
+      echo "Build Auth Test Image..."
+      docker build -f Dockerfile.auth  -t auth:test .
+  test_auth:
+    dir: "{{.TASKFILE_DIR}}/auth/tests"
+    desc: Run Auth tests
+    cmds:
+    - |
+      echo "Run Auth tests..."
+      go test -v ./...
