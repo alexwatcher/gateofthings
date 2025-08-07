@@ -44,7 +44,5 @@ By default, dockertest connects to Docker via:
 > /var/run/docker.sock
 However, on macOS, Docker Desktop may expose the socket at a different path:
 > $HOME/.docker/run/docker.sock
-Solution: Create a symlink
-Run the following command to make Docker accessible at the expected location:
-> ln -s "$HOME/.docker/run/docker.sock" /var/run/docker.sock
-
+Solution: set path into DOCKER_HOST
+> export DOCKER_HOST=unix://${HOME}/.docker/run/docker.sock

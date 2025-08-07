@@ -16,6 +16,7 @@ import (
 type Auth struct {
 	repo     UserRepo
 	tokenTTL time.Duration
+	secret   string
 }
 
 type UserRepo interface {
@@ -25,8 +26,8 @@ type UserRepo interface {
 
 // NewAuth initializes a new instance of the Auth service with the given repository and
 // token TTL.
-func NewAuth(repo UserRepo, tokenTTL time.Duration) *Auth {
-	return &Auth{repo: repo, tokenTTL: tokenTTL}
+func NewAuth(repo UserRepo, secret string, tokenTTL time.Duration) *Auth {
+	return &Auth{repo: repo, secret: secret, tokenTTL: tokenTTL}
 }
 
 // Register creates a new user with the given email and password.
@@ -76,7 +77,7 @@ func (s Auth) Login(ctx context.Context, login string, password string) (string,
 		return "", models.ErrInvalidCredentials
 	}
 
-	token, err := jwt.NewToken(user, s.tokenTTL)
+	token, err := jwt.NewToken(user, s.secret, s.tokenTTL)
 	if err != nil {
 		log.Error("failed to generate token", "error", err)
 		return "", fmt.Errorf("%s: %w", op, err)

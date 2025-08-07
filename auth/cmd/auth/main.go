@@ -27,7 +27,7 @@ func main() {
 	postgresql.Migrate(cfg.Database)
 	slog.Info("end migration")
 
-	application := app.New(ctx, cfg.GRPC, cfg.Database, cfg.TokenTTL)
+	application := app.New(ctx, cfg.GRPC, cfg.Database, cfg.Secret, cfg.TokenTTL)
 	go application.MustRun()
 
 	stop := make(chan os.Signal, 1)

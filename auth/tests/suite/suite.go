@@ -19,11 +19,12 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-const testsDuration = 60 * time.Second
+const testsDuration = 120 * time.Second
 
 var cfg = &config.Config{
 	Env:       "test",
 	TokenTTL:  time.Minute * 10,
+	Secret:    "test",
 	Telemetry: scfg.TelemetryConfig{},
 	GRPC: scfg.GRPCConfig{
 		Timeout: time.Minute,
@@ -154,6 +155,7 @@ func mustSetupAuth(pool *dockertest.Pool, cfg *config.Config, network string) (*
 		Env: []string{
 			fmt.Sprintf("ENV=%s", cfg.Env),
 			fmt.Sprintf("TOKEN_TTL=%v", cfg.TokenTTL),
+			fmt.Sprintf("SECRET=%s", cfg.Secret),
 			fmt.Sprintf("GRPC_PORT=%d", port),
 			fmt.Sprintf("GRPC_TIMEOUT=%v", cfg.GRPC.Timeout),
 			fmt.Sprintf("DB_HOST=%s", cfg.Database.Host),

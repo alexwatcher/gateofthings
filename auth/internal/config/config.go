@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	Env       string               `env:"ENV" envDefault:"local"`
+	Secret    string               `env:"SECRET,required"`
 	TokenTTL  time.Duration        `env:"TOKEN_TTL,required"`
 	Telemetry scfg.TelemetryConfig `envPrefix:"TELEMETRY_"`
 	GRPC      scfg.GRPCConfig      `envPrefix:"GRPC_"`

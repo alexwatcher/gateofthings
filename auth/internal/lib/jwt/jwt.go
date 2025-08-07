@@ -7,7 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func NewToken(user models.User, tokenTTL time.Duration) (string, error) {
+func NewToken(user models.User, secret string, tokenTTL time.Duration) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	clainms := token.Claims.(jwt.MapClaims)
@@ -15,7 +15,7 @@ func NewToken(user models.User, tokenTTL time.Duration) (string, error) {
 	clainms["email"] = user.Email
 	clainms["exp"] = time.Now().Add(tokenTTL).Unix()
 
-	tokenString, err := token.SignedString([]byte("secret"))
+	tokenString, err := token.SignedString([]byte(secret))
 	if err != nil {
 		return "", err
 	}
