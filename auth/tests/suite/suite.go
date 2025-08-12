@@ -60,7 +60,8 @@ func New(t *testing.T) (context.Context, *Suite, func()) {
 	}
 
 	// create network
-	networkName := "test-network"
+	testName := t.Name()
+	networkName := "test-network-" + testName
 	network, err := pool.CreateNetwork(networkName)
 	if err != nil {
 		log.Fatalf("Could not create network: %s", err)
@@ -81,10 +82,11 @@ func New(t *testing.T) (context.Context, *Suite, func()) {
 		}
 	}()
 
-	dbRes := mustSetupPostgres(pool, cfg, networkName)
+	dbRes := mustSetupPostgres(testName, pool, cfg, networkName)
 	resources = append(resources, dbRes)
 
-	authRes, port := mustSetupAuth(pool, cfg, networkName)
+	cfg.Database.Host = strings.TrimPrefix(dbRes.Container.Name, "/")
+	authRes, port := mustSetupAuth(testName, pool, cfg, networkName)
 	resources = append(resources, authRes)
 
 	cc, err := grpc.NewClient(fmt.Sprintf("localhost:%d", port), grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -111,11 +113,11 @@ func New(t *testing.T) (context.Context, *Suite, func()) {
 	}
 }
 
-func mustSetupPostgres(pool *dockertest.Pool, cfg *config.Config, network string) *dockertest.Resource {
+func mustSetupPostgres(testName string, pool *dockertest.Pool, cfg *config.Config, network string) *dockertest.Resource {
 	res, err := pool.RunWithOptions(&dockertest.RunOptions{
 		Repository: "postgres",
 		Tag:        "17.5",
-		Name:       "postgres",
+		Name:       "postgres-" + testName,
 		NetworkID:  network,
 		Env: []string{
 			fmt.Sprintf("POSTGRES_USER=%s", cfg.Database.User),
@@ -144,13 +146,13 @@ func mustSetupPostgres(pool *dockertest.Pool, cfg *config.Config, network string
 	return res
 }
 
-func mustSetupAuth(pool *dockertest.Pool, cfg *config.Config, network string) (*dockertest.Resource, uint16) {
+func mustSetupAuth(testName string, pool *dockertest.Pool, cfg *config.Config, network string) (*dockertest.Resource, uint16) {
 	port := 3000
 	exposedPort := fmt.Sprintf("%d/tcp", port)
 	res, err := pool.RunWithOptions(&dockertest.RunOptions{
 		Repository: "auth",
 		Tag:        "test",
-		Name:       "auth",
+		Name:       "auth-" + testName,
 		NetworkID:  network,
 		Env: []string{
 			fmt.Sprintf("ENV=%s", cfg.Env),

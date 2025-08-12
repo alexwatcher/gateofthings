@@ -10,6 +10,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -51,4 +53,29 @@ func TestRegisterLogin_Login_Success(t *testing.T) {
 	assert.Equal(t, email, claims["email"].(string))
 
 	assert.InDelta(t, loginTime.Add(st.Cfg.TokenTTL).Unix(), int64(claims["exp"].(float64)), expirationDeltaSeconds)
+}
+
+func TestRegister_DuplicateUser(t *testing.T) {
+	ctx, st, tearDown := suite.New(t)
+	defer tearDown()
+
+	email := gofakeit.Email()
+	pass := gofakeit.Password(true, true, true, true, true, passDefaultLength)
+	pass2 := gofakeit.Password(true, true, true, true, true, passDefaultLength)
+
+	respReg, err := st.AuthClient.Register(ctx, &authv1.RegisterRequest{
+		Email:    email,
+		Password: pass,
+	})
+	require.NoError(t, err)
+	assert.NotEmpty(t, respReg.GetId())
+
+	respReg2, err := st.AuthClient.Register(ctx, &authv1.RegisterRequest{
+		Email:    email,
+		Password: pass2,
+	})
+	require.Error(t, err)
+	assert.Empty(t, respReg2.GetId())
+	assert.ErrorContains(t, err, "user already exists")
+	assert.Equal(t, status.Code(err), codes.AlreadyExists)
 }
