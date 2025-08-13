@@ -6,17 +6,17 @@ includes:
   protos: ./protos/Taskfile.yaml
 
 tasks:
-  build_test_auth:
+  build_auth:
     dir: "{{.TASKFILE_DIR}}"
     desc: Build Auth test image
     cmds:
     - |
       echo "Build Auth Test Image..."
-      docker build -f Dockerfile.auth  -t auth:test .
+      docker build -f Dockerfile.auth  -t auth:latest .
   test_auth:
     dir: "{{.TASKFILE_DIR}}/auth/tests"
     desc: Run Auth tests
     cmds:
     - |
       echo "Run Auth tests..."
-      go test -v ./...
+      go test -parallel 4 -v ./...

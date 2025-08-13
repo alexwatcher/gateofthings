@@ -3,6 +3,8 @@ on:
   push:
     branches:
     - main
+    tags:
+    - 'v*'
   pull_request:
     branches:
     - main
@@ -18,11 +20,41 @@ jobs:
         task --version
     - name: Build Test Auth
       run: |
-        task build_test_auth
+        task build_auth
     - name: Pull Dep Images
       run: |
         docker pull postgres:17.5
     - name: Run Tests
       run: |
         task test_auth
-        
+    - name: Version from tag
+      if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+      id: get_version
+      run: |
+        VERSION=$(git describe --tags --abbrev=0 || echo "dev")
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+    - name: Login to DockerHub
+      if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+      uses: docker/login-action@v2
+      with:
+      username: ${{ secrets.DOCKERHUB_USERNAME }}
+      password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Check if Docker tag exists
+      id: check_tag
+      run: |
+        IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/auth
+        TAG=${VERSION}
+        echo "Checking if $IMAGE_NAME:$TAG exists..."
+        EXISTS=$(curl -s -o /dev/null -w "%{http_code}" https://hub.docker.com/v2/repositories/${IMAGE_NAME}/tags/${TAG}/)
+        if [ "$EXISTS" -eq 200 ]; then
+          echo "exists=true" >> $GITHUB_ENV
+        else
+          echo "exists=false" >> $GITHUB_ENV
+        fi
+    - name: Build and Push Docker Image
+      if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && env.exists == 'false'
+      run: |
+        IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/auth
+        docker push $IMAGE_NAME:latest
+        docker tag $IMAGE_NAME:latest $IMAGE_NAME:$VERSION
+        docker push $IMAGE_NAME:$VERSION
