@@ -151,7 +151,7 @@ func mustSetupAuth(testName string, pool *dockertest.Pool, cfg *config.Config, n
 	exposedPort := fmt.Sprintf("%d/tcp", port)
 	res, err := pool.RunWithOptions(&dockertest.RunOptions{
 		Repository: "auth",
-		Tag:        "test",
+		Tag:        "latest",
 		Name:       "auth-" + testName,
 		NetworkID:  network,
 		Env: []string{
