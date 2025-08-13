@@ -16,4 +16,13 @@ jobs:
         sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
         sudo mv ./bin/task /usr/local/bin/task
         task --version
+    - name: Build Test Auth
+      run: |
+        task build_test_auth
+    - name: Pull Dep Images
+      run: |
+        docker pull postgres:17.5
+    - name: Run Tests
+      run: |
+        task test_auth
         
