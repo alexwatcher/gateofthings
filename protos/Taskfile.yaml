@@ -2,7 +2,9 @@ version: 3
 
 vars:
   PROTO_DIR: proto
+  EXTERNAL_DIR: external
   OUT_DIR: ./gen/go
+  PROTOC_INCLUDE: /usr/local/include
 
 tasks:
   generate:
@@ -16,7 +18,11 @@ tasks:
       mkdir -p {{.OUT_DIR}}
       FILES=$(find {{.PROTO_DIR}} -name '*.proto')
       echo "Found proto files: ${FILES}"
-      protoc -I {{.PROTO_DIR}} ${FILES} --go_out={{.OUT_DIR}} --go_opt=paths=source_relative --go-grpc_out={{.OUT_DIR}} --go-grpc_opt=paths=source_relative
+      protoc -I {{.PROTOC_INCLUDE}} -I {{.PROTO_DIR}} -I {{.EXTERNAL_DIR}} \
+        --go_out={{.OUT_DIR}} --go_opt=paths=source_relative \
+        --go-grpc_out={{.OUT_DIR}} --go-grpc_opt=paths=source_relative \
+        --grpc-gateway_out={{.OUT_DIR}} --grpc-gateway_opt=paths=source_relative \
+        ${FILES}
   
   clear:
     dir: "{{.TASKFILE_DIR}}"

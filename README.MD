@@ -5,14 +5,13 @@
 ```
 brew install protobuf
 
-go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-
-go install github.com/go-task/task/v3/cmd/task@latest
-
-go install github.com/envoyproxy/protoc-gen-validate@latest
-
-go install github.com/pressly/goose/v3/cmd/goose@latest
+go get github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway
+go get github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
+go get google.golang.org/protobuf/cmd/protoc-gen-go
+go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
+go get github.com/go-task/task/v3/cmd/task@latest
+go get github.com/envoyproxy/protoc-gen-validate@latest
+go get github.com/pressly/goose/v3/cmd/goose@latest
 ```
 
 ### Structure
