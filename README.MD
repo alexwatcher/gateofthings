@@ -25,23 +25,34 @@ All services organized in shared Go workspace.
 ### Local setup
 Local development and testing are powered by Docker Compose, which orchestrates all necessary services and dependencies.
 
-> docker compose up -d
-
-> docker compose down -v
+```
+docker compose up -d
+docker compose down -v
+```
 
 ### Tasks
 The project uses Task as a task runner to automate common development workflows, such as generating protobuf code.
 Root direcotry has Task file which include all subprojects.
 
 To work with protobufs use following commands:
-> task protos:gen
-> task protos:clr
+```
+task protos:gen
+task protos:clr
+```
 
 ### Functional tests
 Functional tests use dockertest to spin up test containers.
 By default, dockertest connects to Docker via:
-> /var/run/docker.sock
+```
+/var/run/docker.sock
+```
+
 However, on macOS, Docker Desktop may expose the socket at a different path:
-> $HOME/.docker/run/docker.sock
+```
+$HOME/.docker/run/docker.sock
+```
+
 Solution: set path into DOCKER_HOST
-> export DOCKER_HOST=unix://${HOME}/.docker/run/docker.sock
+```
+export DOCKER_HOST=unix://${HOME}/.docker/run/docker.sock
+```
