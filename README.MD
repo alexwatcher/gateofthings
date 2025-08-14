@@ -10,8 +10,7 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 go install github.com/go-task/task/v3/cmd/task@latest
 
-git clone https://github.com/bufbuild/protoc-gen-validate.git
-cd protoc-gen-validate && make build
+go install github.com/envoyproxy/protoc-gen-validate@latest
 
 go install github.com/pressly/goose/v3/cmd/goose@latest
 ```

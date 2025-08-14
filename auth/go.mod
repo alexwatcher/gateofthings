@@ -1,6 +1,6 @@
 module github.com/alexwatcher/gateofthings/auth
 
-go 1.24.5
+go 1.25.0
 
 replace github.com/alexwatcher/gateofthings/protos => ../protos
 

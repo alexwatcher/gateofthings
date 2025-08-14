@@ -1,6 +1,6 @@
 module github.com/alexwatcher/gateofthings/shared
 
-go 1.24.5
+go 1.25.0
 
 require (
 	go.opentelemetry.io/contrib/bridges/otelslog v0.12.0

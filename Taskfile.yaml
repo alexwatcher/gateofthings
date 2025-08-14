@@ -12,7 +12,7 @@ tasks:
     cmds:
     - |
       echo "Build Auth Test Image..."
-      docker build -f Dockerfile.auth  -t auth:latest .
+      docker build -f Dockerfile.auth -t auth:latest .
   test_auth:
     dir: "{{.TASKFILE_DIR}}/auth/tests"
     desc: Run Auth tests
@@ -20,3 +20,10 @@ tasks:
     - |
       echo "Run Auth tests..."
       go test -parallel 4 -v ./...
+  build_migrator:
+    dir: "{{.TASKFILE_DIR}}"
+    desc: Build Migration Image
+    cmds:
+    - |
+      echo "Build Migration Image..."
+      docker build -f ./tools/goose/Dockerfile -t migrator:latest .
