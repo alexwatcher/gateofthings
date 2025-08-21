@@ -17,13 +17,13 @@ import (
 
 type App struct {
 	gRPCServer *grpc.Server
-	gRPConfig  config.GRPCConfig
+	gRPConfig  config.GRPCSrvConfig
 }
 
 // New initializes a new instance of the App struct with a gRPC server
 // listening on the specified port. It registers the authentication
 // service with the server and returns the configured App instance.
-func New(ctx context.Context, gRPConfig config.GRPCConfig, dbConfig config.DatabaseConfig, secret string, tokenTTL time.Duration) *App {
+func New(ctx context.Context, gRPConfig config.GRPCSrvConfig, dbConfig config.DatabaseConfig, secret string, tokenTTL time.Duration) *App {
 
 	dbConn, err := postgresql.NewConnection(ctx, dbConfig)
 	if err != nil {
@@ -43,15 +43,15 @@ func New(ctx context.Context, gRPConfig config.GRPCConfig, dbConfig config.Datab
 }
 
 // MustRun starts the gRPC server and panics if it can't be started.
-func (a *App) MustRun() {
-	if err := a.Run(); err != nil {
+func (a *App) MustRun(ctx context.Context) {
+	if err := a.Run(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // Run starts the gRPC server and logs the port it is listening on. If the
 // server can't be started, it returns an error.
-func (a *App) Run() error {
+func (a *App) Run(ctx context.Context) error {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", a.gRPConfig.Port))
 	if err != nil {
 		return err
@@ -65,7 +65,7 @@ func (a *App) Run() error {
 
 // Stop gracefully stops the gRPC server, ensuring that it no longer accepts new connections
 // and waits for all ongoing RPCs to complete before shutting down.
-func (a *App) Stop() {
+func (a *App) Stop(ctx context.Context) {
 	slog.Info("stopping gRPC server")
 	a.gRPCServer.GracefulStop()
 }
