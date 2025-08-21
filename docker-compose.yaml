@@ -90,3 +90,28 @@ services:
         depends_on:
             postgres:
                 condition: service_healthy
+    
+####
+    auth:
+        image: auth:latest
+        container_name: auth
+        environment:
+            ENV: dev
+            TOKEN_TTL: 1h
+            SECRET: secret
+            GRPC_PORT: 50051
+            TELEMETRY_TRACE: otel-collector:4317
+            TELEMETRY_METRICS: otel-collector:4317
+            TELEMETRY_LOGS: otel-collector:4317
+            DB_HOST: postgres
+            DB_PORT: 5432
+            DB_SSL: false
+            DB_NAME: postgres
+            DB_USER: auth_user
+            DB_PASSWORD: auth_pass
+            DB_MIGRATIONS: ./migrations
+        ports:
+            - 50051:50051
+        depends_on:
+            postgres:
+                condition: service_healthy
