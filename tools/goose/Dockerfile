@@ -2,7 +2,8 @@ FROM golang:1.25.0-alpine AS builder
 
 WORKDIR /app
 
-ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
+ENV CGO_ENABLED=0
+#  GOOS=linux GOARCH=amd64
 
 RUN go install github.com/pressly/goose/v3/cmd/goose@latest
 
