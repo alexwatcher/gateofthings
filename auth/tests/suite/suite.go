@@ -26,9 +26,7 @@ var cfg = &config.Config{
 	TokenTTL:  time.Minute * 10,
 	Secret:    "test",
 	Telemetry: scfg.TelemetryConfig{},
-	GRPC: scfg.GRPCConfig{
-		Timeout: time.Minute,
-	},
+	GRPC:      scfg.GRPCSrvConfig{},
 	Database: scfg.DatabaseConfig{
 		Host:       "postgres",
 		Port:       5432,
@@ -135,7 +133,7 @@ func mustSetupPostgres(testName string, pool *dockertest.Pool, cfg *config.Confi
 			return fmt.Errorf("pg_isready failed: %v - output: %s", err, string(out))
 		}
 		if !strings.Contains(string(out), "accepting connections") {
-			return fmt.Errorf("Postgres not ready: %s", out)
+			return fmt.Errorf("postgres not ready: %s", out)
 		}
 		return nil
 	})
@@ -159,7 +157,6 @@ func mustSetupAuth(testName string, pool *dockertest.Pool, cfg *config.Config, n
 			fmt.Sprintf("TOKEN_TTL=%v", cfg.TokenTTL),
 			fmt.Sprintf("SECRET=%s", cfg.Secret),
 			fmt.Sprintf("GRPC_PORT=%d", port),
-			fmt.Sprintf("GRPC_TIMEOUT=%v", cfg.GRPC.Timeout),
 			fmt.Sprintf("DB_HOST=%s", cfg.Database.Host),
 			fmt.Sprintf("DB_PORT=%d", cfg.Database.Port),
 			fmt.Sprintf("DB_NAME=%s", cfg.Database.Name),

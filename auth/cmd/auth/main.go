@@ -28,12 +28,12 @@ func main() {
 	slog.Info("end migration")
 
 	application := app.New(ctx, cfg.GRPC, cfg.Database, cfg.Secret, cfg.TokenTTL)
-	go application.MustRun()
+	go application.MustRun(ctx)
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
 	sig := <-stop
 
 	slog.Info("stopping application", "signal", sig)
-	application.Stop()
+	application.Stop(ctx)
 }

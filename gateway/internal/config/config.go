@@ -1,19 +1,14 @@
 package config
 
 import (
-	"time"
-
 	scfg "github.com/alexwatcher/gateofthings/shared/pkg/config"
 	"github.com/caarlos0/env/v11"
 )
 
 type Config struct {
-	Env       string               `env:"ENV" envDefault:"local"`
-	Secret    string               `env:"SECRET,required"`
-	TokenTTL  time.Duration        `env:"TOKEN_TTL,required"`
-	Telemetry scfg.TelemetryConfig `envPrefix:"TELEMETRY_"`
-	GRPC      scfg.GRPCSrvConfig   `envPrefix:"GRPC_"`
-	Database  scfg.DatabaseConfig  `envPrefix:"DB_"`
+	Env  string             `env:"ENV" envDefault:"local"`
+	HTTP scfg.HTTPSrvConfig `envPrefix:"HTTP_"`
+	Auth scfg.GRPCClnConfig `envPrefix:"AUTH_"`
 }
 
 // MustLoad loads configuration from environment variables into a Config instance.

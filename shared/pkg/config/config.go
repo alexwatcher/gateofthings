@@ -1,10 +1,15 @@
 package config
 
-import "time"
+type GRPCSrvConfig struct {
+	Port uint16 `env:"PORT,required"`
+}
 
-type GRPCConfig struct {
-	Port    uint16        `env:"PORT,required"`
-	Timeout time.Duration `env:"TIMEOUT,required"`
+type GRPCClnConfig struct {
+	Address string `env:"ADDRESS,required"`
+}
+
+type HTTPSrvConfig struct {
+	Port uint16 `env:"PORT,required"`
 }
 
 type TelemetryConfig struct {
