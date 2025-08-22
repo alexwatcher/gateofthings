@@ -3,9 +3,25 @@ version: 3
 vars:
   PROTO_DIR: proto
   EXTERNAL_DIR: external
-  OUT_DIR: ./gen/go
-  PROTOC_INCLUDE: /usr/local/include
+  OUT_DIR: ./gen
+  INCLUDE_PROTOBUF_PATHS:
+    sh: |
+      paths=(
+        "/usr/local/include"
+        "/opt/homebrew/include"
+        "/usr/include"
+        "/usr/local/opt/protobuf/include"
+        "/opt/protobuf/include"
+        "$(brew --prefix protobuf 2>/dev/null)/include"
+      )
 
+      valid_paths=()
+      for path in "${paths[@]}"; do
+        if [ -d "$path" ]; then
+          valid_paths+=("$path")
+        fi
+      done
+      printf '-I %s ' "${valid_paths[@]}"
 tasks:
   generate:
     dir: "{{.TASKFILE_DIR}}"
@@ -15,13 +31,18 @@ tasks:
     cmds:
     - |
       echo "Generating Go code from proto files..."
-      mkdir -p {{.OUT_DIR}}
+      mkdir -p {{.OUT_DIR}}/go
+      mkdir -p {{.OUT_DIR}}/swagger
       FILES=$(find {{.PROTO_DIR}} -name '*.proto')
       echo "Found proto files: ${FILES}"
-      protoc -I {{.PROTOC_INCLUDE}} -I {{.PROTO_DIR}} -I {{.EXTERNAL_DIR}} \
-        --go_out={{.OUT_DIR}} --go_opt=paths=source_relative \
-        --go-grpc_out={{.OUT_DIR}} --go-grpc_opt=paths=source_relative \
-        --grpc-gateway_out={{.OUT_DIR}} --grpc-gateway_opt=paths=source_relative \
+      protoc \
+        {{.INCLUDE_PROTOBUF_PATHS}} \
+        -I {{.PROTO_DIR}} \
+        -I {{.EXTERNAL_DIR}} \
+        --go_out={{.OUT_DIR}}/go --go_opt=paths=source_relative \
+        --go-grpc_out={{.OUT_DIR}}/go --go-grpc_opt=paths=source_relative \
+        --grpc-gateway_out={{.OUT_DIR}}/go --grpc-gateway_opt=paths=source_relative \
+        --openapiv2_out={{.OUT_DIR}}/swagger \
         ${FILES}
   
   clear:
@@ -32,4 +53,5 @@ tasks:
     cmds:
     - |
       echo "Cleanup generated files"
-      rm -rf {{.OUT_DIR}}
+      rm -rf {{.OUT_DIR}}/go
+      rm -rf {{.OUT_DIR}}/swagger
