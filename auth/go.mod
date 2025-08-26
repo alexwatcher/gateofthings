@@ -19,6 +19,7 @@ require (
 	github.com/ory/dockertest/v3 v3.12.0
 	github.com/pressly/goose/v3 v3.24.3
 	github.com/stretchr/testify v1.10.0
+	go.opentelemetry.io/otel v1.37.0
 	golang.org/x/crypto v0.40.0
 	google.golang.org/grpc v1.74.2
 )
@@ -64,7 +65,6 @@ require (
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/contrib/bridges/otelslog v0.12.0 // indirect
-	go.opentelemetry.io/otel v1.37.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.13.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.37.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.37.0 // indirect

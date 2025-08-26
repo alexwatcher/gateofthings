@@ -45,11 +45,14 @@ func (a *App) Run(ctx context.Context) error {
 		runtime.WithForwardResponseOption(interceptors.MakeSetLoginCookie()),
 		runtime.WithMiddlewares(
 			middlewares.TracingMiddleware,
-			middlewares.MakeCSRFMiddleware([]string{"/v1/login", "/v1/register"}),
+			middlewares.MakeCSRFMiddleware([]string{"/v1/auth/login", "/v1/auth/register"}),
 		),
 	)
 
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	opts := []grpc.DialOption{
+		grpc.WithChainUnaryInterceptor(interceptors.MakeTracingClientInterceptor()),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
 	err := authv1.RegisterAuthHandlerFromEndpoint(ctx, mux, a.authConfig.Address, opts)
 	if err != nil {
 		return fmt.Errorf("app.run: register http endpoint: %w", err)
