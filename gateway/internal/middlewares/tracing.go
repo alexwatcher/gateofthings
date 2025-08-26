@@ -8,9 +8,8 @@ import (
 )
 
 func TracingMiddleware(next runtime.HandlerFunc) runtime.HandlerFunc {
+	tracer := otel.Tracer("grpc-gateway-tracer")
 	return func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
-		tracer := otel.Tracer("grpc-gateway-tracer")
-
 		ctx, span := tracer.Start(r.Context(), r.URL.Path)
 		defer span.End()
 

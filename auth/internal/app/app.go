@@ -8,7 +8,8 @@ import (
 	"time"
 
 	grpcauth "github.com/alexwatcher/gateofthings/auth/internal/grpc/auth"
-	"github.com/alexwatcher/gateofthings/auth/internal/grpc/valid"
+	"github.com/alexwatcher/gateofthings/auth/internal/grpc/interceptors/tracing"
+	"github.com/alexwatcher/gateofthings/auth/internal/grpc/interceptors/valid"
 	"github.com/alexwatcher/gateofthings/auth/internal/repository/postgresql"
 	"github.com/alexwatcher/gateofthings/auth/internal/services"
 	"github.com/alexwatcher/gateofthings/shared/pkg/config"
@@ -34,7 +35,12 @@ func New(ctx context.Context, gRPConfig config.GRPCSrvConfig, dbConfig config.Da
 
 	authService := services.NewAuth(repo, secret, tokenTTL)
 
-	gRPCServer := grpc.NewServer(grpc.UnaryInterceptor(valid.UnaryInterceptor))
+	gRPCServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			tracing.TracingInterceptor(),
+			valid.UnaryInterceptor,
+		),
+	)
 	grpcauth.Register(gRPCServer, authService)
 	return &App{
 		gRPCServer: gRPCServer,
