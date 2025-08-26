@@ -1,0 +1,32 @@
+FROM golang:1.25.0-alpine AS builder
+
+RUN apk add --no-cache git
+
+WORKDIR /app
+
+COPY go.work go.work.sum ./
+COPY auth/go.mod auth/go.sum ./auth/
+COPY gateway/go.mod gateway/go.sum ./gateway/
+COPY shared/go.mod shared/go.sum ./shared/
+COPY protos/go.mod protos/go.sum ./protos/
+
+RUN go work sync && go mod download
+
+COPY gateway/ ./gateway/
+COPY shared/ ./shared/
+COPY protos/ ./protos/
+
+RUN go build -o ./gateway/gateway ./gateway/cmd/gateway/main.go
+
+FROM alpine:3.22.1
+
+RUN apk add --no-cache ca-certificates
+
+WORKDIR /app
+
+COPY --from=builder /app/gateway/gateway .
+COPY protos/gen/swagger ./swagger
+
+EXPOSE 3000
+
+CMD ["./gateway"]

@@ -8,18 +8,18 @@ includes:
 tasks:
   build_auth:
     dir: "{{.TASKFILE_DIR}}"
-    desc: Build Auth test image
+    desc: Build Auth image
     cmds:
     - |
-      echo "Build Auth Test Image..."
+      echo "Build Auth Image..."
       docker build -f Dockerfile.auth -t auth:latest .
-  test_auth:
-    dir: "{{.TASKFILE_DIR}}/auth/tests"
-    desc: Run Auth tests
+  build_gateway:
+    dir: "{{.TASKFILE_DIR}}"
+    desc: Build Gateway image
     cmds:
     - |
-      echo "Run Auth tests..."
-      go test -parallel 4 -v ./...
+      echo "Build Gateway Image..."
+      docker build -f Dockerfile.gateway -t gateway:latest .
   build_migrator:
     dir: "{{.TASKFILE_DIR}}"
     desc: Build Migration Image
@@ -27,3 +27,11 @@ tasks:
     - |
       echo "Build Migration Image..."
       docker build -f ./tools/goose/Dockerfile -t migrator:latest .
+  test_auth:
+    dir: "{{.TASKFILE_DIR}}/auth/tests"
+    desc: Run Auth tests
+    cmds:
+    - |
+      echo "Run Auth tests..."
+      go test -parallel 4 -v ./...
+  
