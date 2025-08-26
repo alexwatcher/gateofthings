@@ -12,7 +12,6 @@ vars:
         "/usr/include"
         "/usr/local/opt/protobuf/include"
         "/opt/protobuf/include"
-        "$(brew --prefix protobuf 2>/dev/null)/include"
       )
 
       valid_paths=()
