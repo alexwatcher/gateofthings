@@ -26,6 +26,7 @@ tasks:
     dir: "{{.TASKFILE_DIR}}"
     aliases:
     - gen
+    deps: [clear]
     desc: Generate proto files
     cmds:
     - |

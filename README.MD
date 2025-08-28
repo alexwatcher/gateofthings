@@ -4,41 +4,51 @@
 
 project use Task for automation scripts
 
+use command to install task
+```
+go get github.com/go-task/task/v3/cmd/task@latest
+```
+
+also project use protobuf, use following command to install it on mac os
 ```
 brew install protobuf
+```
 
-go get github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway
-go get github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
-go get google.golang.org/protobuf/cmd/protoc-gen-go
-go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
-go get github.com/go-task/task/v3/cmd/task@latest
-go get github.com/envoyproxy/protoc-gen-validate@latest
-go get github.com/pressly/goose/v3/cmd/goose@latest
+to install other dependencies, use following Task command
+```
+task install_tools
 ```
 
 ### Structure
 All services organized in shared Go workspace.
 **auth** - authorization service
+**gateway** - http-grpc reverse proxy
 **shared** - library of common code and data structures
 **protos** - protobuf and grps definitions
 **configs** - configuration files for dependencies (OTL collector, Loki, Tempo, Prometheus, Grafana)
 
 ### Local setup
 Local development and testing are powered by Docker Compose, which orchestrates all necessary services and dependencies.
-
+To build all services run following command:
 ```
-docker compose up -d
-docker compose down -v
+task build
+```
+it include build of migrator, gateway, auth services
+
+To bring up the services run following command:
+```
+task up
 ```
 
-### Tasks
-The project uses Task as a task runner to automate common development workflows, such as generating protobuf code.
-Root direcotry has Task file which include all subprojects.
+To shutdown environment:
+```
+task down
+```
 
-To work with protobufs use following commands:
+### gRPC
+To generate protobugs and grpc use command
 ```
 task protos:gen
-task protos:clr
 ```
 
 ### Functional tests

@@ -26,23 +26,21 @@ jobs:
       uses: docker/metadata-action@v5
       with:
         images: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/auth
+          ${{ secrets.DOCKERHUB_USERNAME }}/got-auth
+          ${{ secrets.DOCKERHUB_USERNAME }}/got-gateway
+          ${{ secrets.DOCKERHUB_USERNAME }}/got-migrator
         tags: |
           type=edge
           type=semver,pattern={{version}}
           type=semver,pattern={{major}}.{{minor}}
-    - name: Print generated tags
-      run: |
-        echo "All tags: ${{ steps.meta.outputs.tags }}"
-        echo "All labels: ${{ steps.meta.outputs.labels }}"
     - name: Install Task
       run: |
         sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
         sudo mv ./bin/task /usr/local/bin/task
         task --version
-    - name: Build Auth
+    - name: Build Services
       run: |
-        task build_auth
+        task build
     - name: Pull Dep Images
       run: |
         docker pull postgres:17.5
@@ -58,8 +56,21 @@ jobs:
     - name: Tag & Push
       if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
       run: |
-        for tag in $(echo "${{ steps.meta.outputs.tags }}" | tr ',' ' '); do
-          echo "Tagging image as: $tag"
-          docker tag auth:latest "$tag"
+        echo "Tag & Push Auth"
+        for tag in $(echo "${{ steps.meta.outputs.got-auth.tags }}" | tr ',' ' '); do
+          echo "Tagging images as: $tag"
+          docker tag got-auth:latest "$tag"
+          docker push "$tag"
+        done
+        echo "Tag & Push Gateway"
+        for tag in $(echo "${{ steps.meta.outputs.got-gateway.tags }}" | tr ',' ' '); do
+          echo "Tagging images as: $tag"
+          docker tag got-gateway:latest "$tag"
+          docker push "$tag"
+        done
+        echo "Tag & Push Migrator"
+        for tag in $(echo "${{ steps.meta.outputs.got-migrator.tags }}" | tr ',' ' '); do
+          echo "Tagging images as: $tag"
+          docker tag got-migrator:latest "$tag"
           docker push "$tag"
         done

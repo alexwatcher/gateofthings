@@ -6,27 +6,43 @@ includes:
   protos: ./protos/Taskfile.yaml
 
 tasks:
+  install_tools:
+    dir: "{{.TASKFILE_DIR}}"
+    desc: Install dependencies
+    cmds:
+    - |
+      go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.8
+      go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.5.1
+      go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.27.1
+      go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.27.2
+      go install github.com/envoyproxy/protoc-gen-validate@v1.2.1
+      go install github.com/pressly/goose/v3/cmd/goose@v3.25.0
+  build:
+    desc: Build
+    deps: [build_auth, build_gateway, build_migrator]
+    cmds:
+      -  echo "Build services"
   build_auth:
     dir: "{{.TASKFILE_DIR}}"
     desc: Build Auth image
     cmds:
     - |
       echo "Build Auth Image..."
-      docker build -f Dockerfile.auth -t auth:latest .
+      docker build -f Dockerfile.auth -t got-auth:latest .
   build_gateway:
     dir: "{{.TASKFILE_DIR}}"
     desc: Build Gateway image
     cmds:
     - |
       echo "Build Gateway Image..."
-      docker build -f Dockerfile.gateway -t gateway:latest .
+      docker build -f Dockerfile.gateway -t got-gateway:latest .
   build_migrator:
     dir: "{{.TASKFILE_DIR}}"
     desc: Build Migration Image
     cmds:
     - |
       echo "Build Migration Image..."
-      docker build -f ./tools/goose/Dockerfile -t migrator:latest .
+      docker build -f Dockerfile.migrator -t got-migrator:latest .
   test_auth:
     dir: "{{.TASKFILE_DIR}}/auth/tests"
     desc: Run Auth tests
@@ -34,4 +50,12 @@ tasks:
     - |
       echo "Run Auth tests..."
       go test -parallel 4 -v ./...
+  up:
+    desc: Bring up environemnt
+    cmds:
+      - docker compose up -d
+  down:
+    desc: Shutdown environemnt
+    cmds:
+    - docker compose down -v
   
