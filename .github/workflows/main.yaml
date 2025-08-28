@@ -21,14 +21,29 @@ jobs:
       run: |
         echo "All tags:"
         git tag
-    - name: Docker meta
-      id: meta
+    - name: Docker meta (Auth)
+      id: meta_auth
       uses: docker/metadata-action@v5
       with:
-        images: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/got-auth
-          ${{ secrets.DOCKERHUB_USERNAME }}/got-gateway
-          ${{ secrets.DOCKERHUB_USERNAME }}/got-migrator
+        images: ${{ secrets.DOCKERHUB_USERNAME }}/got-auth
+        tags: |
+          type=edge
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+    - name: Docker meta (Gateway)
+      id: meta_gateway
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ secrets.DOCKERHUB_USERNAME }}/got-gateway
+        tags: |
+          type=edge
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+    - name: Docker meta (Auth)
+      id: meta_migrator
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ secrets.DOCKERHUB_USERNAME }}/got-migrator
         tags: |
           type=edge
           type=semver,pattern={{version}}
@@ -57,19 +72,19 @@ jobs:
       if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
       run: |
         echo "Tag & Push Auth"
-        for tag in $(echo "${{ steps.meta.outputs.got-auth.tags }}" | tr ',' ' '); do
+        for tag in $(echo "${{ steps.meta_auth.outputs.tags }}" | tr ',' ' '); do
           echo "Tagging images as: $tag"
           docker tag got-auth:latest "$tag"
           docker push "$tag"
         done
         echo "Tag & Push Gateway"
-        for tag in $(echo "${{ steps.meta.outputs.got-gateway.tags }}" | tr ',' ' '); do
+        for tag in $(echo "${{ steps.meta_gateway.outputs.tags }}" | tr ',' ' '); do
           echo "Tagging images as: $tag"
           docker tag got-gateway:latest "$tag"
           docker push "$tag"
         done
         echo "Tag & Push Migrator"
-        for tag in $(echo "${{ steps.meta.outputs.got-migrator.tags }}" | tr ',' ' '); do
+        for tag in $(echo "${{ steps.meta_migrator.outputs.tags }}" | tr ',' ' '); do
           echo "Tagging images as: $tag"
           docker tag got-migrator:latest "$tag"
           docker push "$tag"
