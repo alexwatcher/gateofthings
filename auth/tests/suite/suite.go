@@ -182,8 +182,8 @@ func mustSetupAuth(testName string, pool *dockertest.Pool, cfg *config.Config, n
 		panic(err)
 	}
 
-	// TODO: implemebt and then use healthcheck to wait availability of auth service
-	time.Sleep(time.Second)
+	// TODO: implement and then use healthcheck to wait availability of auth service
+	time.Sleep(time.Second * 5)
 
 	return res, uint16(hostPort)
 }
