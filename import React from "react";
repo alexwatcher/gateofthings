@@ -1,0 +1,72 @@
+import React from "react";
+
+export default function LoginPage() {
+  return (
+    <div style={{
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      background: "linear-gradient(135deg, #1e293b 0%, #64748b 100%)"
+    }}>
+      <h1 style={{
+        color: "#fff",
+        fontSize: "2.5rem",
+        fontWeight: "bold",
+        marginBottom: "2rem",
+        letterSpacing: "2px",
+        textShadow: "0 2px 16px #0006"
+      }}>
+        Gate of Things
+      </h1>
+      <form style={{
+        background: "#fff",
+        padding: "2rem 2.5rem",
+        borderRadius: "1rem",
+        boxShadow: "0 4px 32px #0002",
+        display: "flex",
+        flexDirection: "column",
+        gap: "1.2rem",
+        minWidth: "320px"
+      }}>
+        <input
+          type="text"
+          placeholder="Логин"
+          style={{
+            padding: "0.75rem 1rem",
+            borderRadius: "0.5rem",
+            border: "1px solid #cbd5e1",
+            fontSize: "1rem"
+          }}
+        />
+        <input
+          type="password"
+          placeholder="Пароль"
+          style={{
+            padding: "0.75rem 1rem",
+            borderRadius: "0.5rem",
+            border: "1px solid #cbd5e1",
+            fontSize: "1rem"
+          }}
+        />
+        <button
+          type="submit"
+          style={{
+            padding: "0.75rem 1rem",
+            borderRadius: "0.5rem",
+            border: "none",
+            background: "#334155",
+            color: "#fff",
+            fontWeight: "bold",
+            fontSize: "1rem",
+            cursor: "pointer",
+            marginTop: "0.5rem"
+          }}
+        >
+          Войти
+        </button>
+      </form>
+    </div>
+  );
+}
