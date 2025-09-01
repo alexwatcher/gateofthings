@@ -63,23 +63,6 @@ services:
         ports:
             - 5432:5432
 
-    migration:
-        build: ./tools/goose
-        container_name: migration
-        command: ["up"]
-        volumes:
-            - ./migrations:/migrations
-        environment:
-            GOOSE_DRIVER: postgres
-            GOOSE_DBSTRING: "host=postgres port=5432 user=admin password=pass dbname=postgres sslmode=disable"
-            METRICS_USER: metrics_user
-            METRICS_PASS: metrics_pass
-            AUTH_USER: auth_user
-            AUTH_PASS: auth_pass
-        depends_on:
-            postgres:
-                condition: service_healthy
-
     postgres-exporter:
         image: quay.io/prometheuscommunity/postgres-exporter:v0.17.1
         container_name: postgres-exporter
@@ -93,7 +76,7 @@ services:
     
 ####
     auth:
-        image: auth:latest
+        image: got-auth:latest
         container_name: auth
         environment:
             ENV: dev
@@ -115,9 +98,11 @@ services:
         depends_on:
             postgres:
                 condition: service_healthy
+            migrator:
+                condition: service_completed_successfully
     
     gateway:
-        image: gateway:latest
+        image: got-gateway:latest
         container_name: gateway
         environment:
             ENV: dev
@@ -129,6 +114,22 @@ services:
             TELEMETRY_LOGS: otel-collector:4317
         ports:
             - 3000:3000
+        depends_on:
+            postgres:
+                condition: service_healthy
+    
+    migrator:
+        image: got-migrator:latest
+        container_name: migrator
+        command: ["up"]
+        restart: "no"
+        environment:
+            GOOSE_DRIVER: postgres
+            GOOSE_DBSTRING: "host=postgres port=5432 user=admin password=pass dbname=postgres sslmode=disable"
+            METRICS_USER: metrics_user
+            METRICS_PASS: metrics_pass
+            AUTH_USER: auth_user
+            AUTH_PASS: auth_pass
         depends_on:
             postgres:
                 condition: service_healthy

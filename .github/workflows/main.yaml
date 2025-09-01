@@ -29,7 +29,6 @@ jobs:
         tags: |
           type=edge
           type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
     - name: Docker meta (Gateway)
       id: meta_gateway
       uses: docker/metadata-action@v5
@@ -38,7 +37,6 @@ jobs:
         tags: |
           type=edge
           type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
     - name: Docker meta (Auth)
       id: meta_migrator
       uses: docker/metadata-action@v5
@@ -47,7 +45,6 @@ jobs:
         tags: |
           type=edge
           type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
     - name: Install Task
       run: |
         sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
