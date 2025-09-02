@@ -1,32 +1,34 @@
-'use client';
-import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { User, Home, Cpu, BarChart2 } from 'lucide-react';
-import HomePanel from './components/homepanel';
-import DevicesPanel from './components/devicespanel';
-import StatisticsPanel from './components/statisticspanel';
+"use client";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { User, Home, Cpu, BarChart2 } from "lucide-react";
+import HomePanel from "./components/homepanel";
+import DevicesPanel from "./components/devicespanel";
+import StatisticsPanel from "./components/statisticspanel";
 
 export default function DashboardLayout() {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activePanel, setActivePanel] = useState<'home' | 'devices' | 'statistics'>('home');
+  const [activePanel, setActivePanel] = useState<
+    "home" | "devices" | "statistics"
+  >("home");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const renderPanel = () => {
     switch (activePanel) {
-      case 'home':
+      case "home":
         return <HomePanel />;
-      case 'devices':
+      case "devices":
         return <DevicesPanel />;
-      case 'statistics':
+      case "statistics":
         return <StatisticsPanel />;
     }
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem('authToken'); // пример логики выхода
-    router.push('/login');
+    localStorage.removeItem("authToken"); // пример логики выхода
+    router.push("/login");
   };
 
   // Закрываем меню, если клик вне него
@@ -36,8 +38,8 @@ export default function DashboardLayout() {
         setUserMenuOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
@@ -45,7 +47,7 @@ export default function DashboardLayout() {
       {/* Sidebar */}
       <aside
         className={`flex flex-col border-r border-green-500 bg-black/80 p-4 transition-all shadow-[0_0_15px_#00ff00] ${
-          sidebarOpen ? 'w-64' : 'w-16'
+          sidebarOpen ? "w-64" : "w-16"
         }`}
       >
         {/* Menu Button */}
@@ -69,18 +71,23 @@ export default function DashboardLayout() {
         {/* Navigation */}
         <nav className="flex flex-col gap-4">
           {[
-            { name: 'home', icon: <Home size={20} /> },
-            { name: 'devices', icon: <Cpu size={20} /> },
-            { name: 'statistics', icon: <BarChart2 size={20} /> },
+            { name: "home", icon: <Home size={20} /> },
+            { name: "devices", icon: <Cpu size={20} /> },
+            { name: "statistics", icon: <BarChart2 size={20} /> },
           ].map((item) => (
             <button
               key={item.name}
               onClick={() => setActivePanel(item.name as any)}
               className={`flex items-center justify-center gap-2 rounded-md border border-green-500 p-2 w-full h-10 hover:bg-green-500 hover:text-black ${
-                activePanel === item.name ? 'bg-green-500 text-black' : ''
-              } ${sidebarOpen ? 'justify-start px-2' : ''}`}
+                activePanel === item.name ? "bg-green-500 text-black" : ""
+              } ${sidebarOpen ? "justify-start px-2" : ""}`}
             >
-              {item.icon} {sidebarOpen && <span>{item.name.charAt(0).toUpperCase() + item.name.slice(1)}</span>}
+              {item.icon}{" "}
+              {sidebarOpen && (
+                <span>
+                  {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
+                </span>
+              )}
             </button>
           ))}
         </nav>
