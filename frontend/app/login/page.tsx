@@ -16,7 +16,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex h-screen items-center justify-center font-mono">
-      {/* Фон с матричным дождем */}
+      {/* Matrix rain background */}
       <MatrixRain />
 
       <form
