@@ -1,0 +1,13 @@
+{
+  "appTitle": "Gate of Things",
+  "loginPlaceholder": "Username",
+  "passwordPlaceholder": "Password",
+  "signInButton": "Sign in",
+  "signUpLink": "Sign up",
+  "forgotPasswordLink": "Forgot password",
+  "dashboardHome": "Home",
+  "dashboardDevices": "Devices",
+  "dashboardStatistics": "Statistics",
+  "settings": "Settings",
+  "logout": "Logout"
+}
