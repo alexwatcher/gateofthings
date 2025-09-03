@@ -1,15 +1,17 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import Cookies from "js-cookie";
 import { locales, Locale } from "../../i18n";
 
-export default function LanguageDropdown({
+export default function LanguageSwitcher({
   defaultLocale = "en",
 }: {
   defaultLocale?: Locale;
 }) {
+  const router = useRouter();
   const [selected, setSelected] = useState<Locale>(defaultLocale);
   const [displayNames, setDisplayNames] = useState<Record<Locale, string>>(
     {} as Record<Locale, string>
@@ -26,6 +28,7 @@ export default function LanguageDropdown({
 
     const saved = Cookies.get("NEXT_LOCALE") as Locale;
     if (saved && locales.includes(saved)) setSelected(saved);
+    router.refresh();
   }, [defaultLocale]);
 
   const handleChange = (locale: Locale) => {

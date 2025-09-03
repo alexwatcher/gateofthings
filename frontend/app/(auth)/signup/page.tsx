@@ -65,7 +65,7 @@ export default function SignupPagePage() {
         type="submit"
         className="mt-2 rounded-lg border border-green-500 bg-black p-2 font-bold text-green-400 transition hover:bg-green-500 hover:text-black hover:shadow-[0_0_15px_#00ff00]"
       >
-        {t("registerButton")}
+        {t("signUpButton")}
       </button>
     </form>
   );
