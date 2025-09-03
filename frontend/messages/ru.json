@@ -1,8 +1,11 @@
 {
   "appTitle": "Gate of Things",
-  "loginPlaceholder": "Логин",
+  "emailPlaceholder": "Email",
   "passwordPlaceholder": "Пароль",
+  "confirmPasswordPlaceholder": "Подтвердите пароль",
   "loginButton": "Войти",
+  "registerButton": "Регистрация",
+  "restorePasswordButton": "Восстановить пароль",
   "signUpLink": "Регистрация",
   "forgotPasswordLink": "Забыл пароль",
   "dashboardHome": "Главная",
