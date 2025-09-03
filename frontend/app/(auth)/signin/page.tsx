@@ -59,7 +59,7 @@ export default function SignInPage() {
           href="/resetpassword"
           className="text-green-400 hover:text-green-200 transition"
         >
-          {t("forgotPasswordLink")}
+          {t("restorePasswordLink")}
         </Link>
       </div>
     </form>
