@@ -27,11 +27,11 @@ export default function DashboardLayout() {
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem("authToken"); // пример логики выхода
-    router.push("/login");
+    localStorage.removeItem("authToken");
+    router.push("/signin");
   };
 
-  // Закрываем меню, если клик вне него
+  // close menu on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -115,7 +115,7 @@ export default function DashboardLayout() {
                   onClick={handleSignOut}
                   className="p-2 text-green-400 hover:bg-green-500 hover:text-black w-full text-left"
                 >
-                  Logout
+                  SignOut
                 </button>
               </div>
             )}

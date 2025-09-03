@@ -31,7 +31,7 @@ export default function SignupPagePage() {
 
       <input
         type="text"
-        placeholder={t("usernamePlaceholder")}
+        placeholder={t("emailPlaceholder")}
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         className="rounded-lg border border-green-500 bg-black p-2 text-green-400 placeholder-green-700 focus:outline-none focus:shadow-[0_0_10px_#00ff00]"
