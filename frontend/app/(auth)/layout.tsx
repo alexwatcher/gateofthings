@@ -1,6 +1,6 @@
 "use client";
 
-import LanguageSwitcher from "../components/languageswitcher";
+import LanguageSwitcher from "../../components/LanguageSwitcher";
 
 export default function AuthLayout({
   children,

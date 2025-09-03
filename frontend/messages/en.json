@@ -12,5 +12,5 @@
   "dashboardDevices": "Devices",
   "dashboardStatistics": "Statistics",
   "settings": "Settings",
-  "logout": "Logout"
+  "signOut": "Sign out"
 }

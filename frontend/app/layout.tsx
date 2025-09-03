@@ -1,22 +1,22 @@
 import { NextIntlClientProvider } from "next-intl";
 import "./globals.css";
-import { getLocale, getMessages } from "next-intl/server";
-import MatrixRain from "./components/matrixrain";
+import MatrixRain from "../components/MatrixRain";
+import { LocaleProvider } from "../context/LocaleContext";
+
+const availableLocales = ["en", "ru"];
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const messages = await getMessages();
-  const locale = await getLocale();
   return (
-    <html lang={locale}>
+    <html>
       <body className="h-screen w-screen">
         <MatrixRain />
-        <NextIntlClientProvider messages={messages}>
+        <LocaleProvider defaultLocale="en" localesList={availableLocales}>
           {children}
-        </NextIntlClientProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

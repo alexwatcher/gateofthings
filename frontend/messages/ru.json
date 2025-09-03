@@ -1,6 +1,6 @@
 {
   "appTitle": "Gate of Things",
-  "emailPlaceholder": "Email",
+  "emailPlaceholder": "эл. почта",
   "passwordPlaceholder": "Пароль",
   "confirmPasswordPlaceholder": "Подтвердите пароль",
   "signInButton": "Войти",
@@ -12,5 +12,5 @@
   "dashboardDevices": "Устройства",
   "dashboardStatistics": "Статистика",
   "settings": "Настройки",
-  "logout": "Выйти"
+  "signOut": "Выйти"
 }
