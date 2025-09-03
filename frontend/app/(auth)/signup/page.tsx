@@ -23,8 +23,16 @@ export default function SignupPagePage() {
   return (
     <form
       onSubmit={handleSignUp}
-      className="flex w-80 flex-col gap-4 rounded-xl border border-green-500 bg-black/80 p-6 shadow-[0_0_20px_#00ff00]"
+      className="relative flex w-80 flex-col gap-4 rounded-xl border border-green-500 bg-black/80 p-6 shadow-[0_0_20px_#00ff00]"
     >
+      <button
+        type="button"
+        onClick={() => router.back()}
+        className="absolute top-1.5 right-3 text-green-400 hover:text-red-500 font-bold text-xl"
+      >
+        ×
+      </button>
+
       <h1 className="mb-2 text-center text-3xl font-bold text-green-400 tracking-wider drop-shadow-[0_0_10px_#00ff00]">
         {t("appTitle")}
       </h1>
