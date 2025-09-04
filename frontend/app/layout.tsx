@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from "next-intl";
 import "./globals.css";
 import MatrixRain from "../components/MatrixRain";
 import { LocaleProvider } from "../context/LocaleContext";
+import { NotificationProvider } from "../context/NotificationContext";
 
 const availableLocales = ["en", "ru"];
 
@@ -15,7 +16,7 @@ export default async function RootLayout({
       <body className="h-screen w-screen">
         <MatrixRain />
         <LocaleProvider defaultLocale="en" localesList={availableLocales}>
-          {children}
+          <NotificationProvider>{children}</NotificationProvider>
         </LocaleProvider>
       </body>
     </html>

@@ -1,7 +1,7 @@
 {
   "appTitle": "Gate of Things",
-  "emailPlaceholder": "Email",
-  "passwordPlaceholder": "Password",
+  "emailPlaceholder": "email",
+  "passwordPlaceholder": "password",
   "confirmPasswordPlaceholder": "Confirm password",
   "signInButton": "Sign in",
   "signUpButton": "Sign up",
