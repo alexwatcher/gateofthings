@@ -30,14 +30,14 @@ func NewAuth(repo UserRepo, secret string, tokenTTL time.Duration) *Auth {
 	return &Auth{repo: repo, secret: secret, tokenTTL: tokenTTL}
 }
 
-// Register creates a new user with the given email and password.
+// SignUp creates a new user with the given email and password.
 //
 // If the user with the given email already exists, it returns an error.
-func (s Auth) Register(ctx context.Context, email string, password string) (string, error) {
-	op := "auth.register"
+func (s Auth) SignUp(ctx context.Context, email string, password string) (string, error) {
+	op := "auth.signup"
 	log := slog.With("op", op, "email", email)
 
-	log.Info("registering user")
+	log.Info("sign up user")
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Error("failed to generate password hash", "error", err)
@@ -49,19 +49,19 @@ func (s Auth) Register(ctx context.Context, email string, password string) (stri
 		log.Error("failed to insert user", "error", err)
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
-	log.Info("user registered")
+	log.Info("user signed up")
 
 	return id, nil
 }
 
-// Login generates a JWT token for the given user. If the user is not found or the
+// SignIn generates a JWT token for the given user. If the user is not found or the
 // password is incorrect, it returns an error.
-func (s Auth) Login(ctx context.Context, login string, password string) (string, error) {
-	op := "auth.login"
-	log := slog.With("op", op, "login", login)
+func (s Auth) SignIn(ctx context.Context, email string, password string) (string, error) {
+	op := "auth.signin"
+	log := slog.With("op", op, "email", email)
 
-	log.Info("logging in user")
-	user, err := s.repo.Get(ctx, login)
+	log.Info("sign in user")
+	user, err := s.repo.Get(ctx, email)
 	if err != nil {
 		if errors.Is(err, repository.ErrUserNotFound) {
 			log.Error("user not found", "error", err)
@@ -82,7 +82,7 @@ func (s Auth) Login(ctx context.Context, login string, password string) (string,
 		log.Error("failed to generate token", "error", err)
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
-	log.Info("user logged in")
+	log.Info("user signed in")
 
 	return token, nil
 }

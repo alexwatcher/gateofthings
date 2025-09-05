@@ -19,30 +19,30 @@ const (
 	expirationDeltaSeconds = 2
 )
 
-func TestRegisterLogin_Login_Success(t *testing.T) {
+func TestSignUp_SingIn_Success(t *testing.T) {
 	ctx, st, tearDown := suite.New(t)
 	defer tearDown()
 
 	email := gofakeit.Email()
 	pass := gofakeit.Password(true, true, true, true, true, passDefaultLength)
 
-	respReg, err := st.AuthClient.Register(ctx, &authv1.RegisterRequest{
+	respReg, err := st.AuthClient.SignUp(ctx, &authv1.SignUpRequest{
 		Email:    email,
 		Password: pass,
 	})
 	require.NoError(t, err)
 	assert.NotEmpty(t, respReg.GetId())
 
-	loginTime := time.Now()
+	signInTime := time.Now()
 
-	respLogin, err := st.AuthClient.Login(ctx, &authv1.LoginRequest{
+	respSignIn, err := st.AuthClient.SignIn(ctx, &authv1.SignInRequest{
 		Email:    email,
 		Password: pass,
 	})
 	require.NoError(t, err)
-	assert.NotEmpty(t, respLogin.GetToken())
+	assert.NotEmpty(t, respSignIn.GetToken())
 
-	token, err := jwt.Parse(respLogin.GetToken(), func(t *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(respSignIn.GetToken(), func(t *jwt.Token) (interface{}, error) {
 		return []byte(st.Cfg.Secret), nil
 	})
 	require.NoError(t, err)
@@ -52,10 +52,10 @@ func TestRegisterLogin_Login_Success(t *testing.T) {
 	assert.Equal(t, respReg.GetId(), claims["uid"].(string))
 	assert.Equal(t, email, claims["email"].(string))
 
-	assert.InDelta(t, loginTime.Add(st.Cfg.TokenTTL).Unix(), int64(claims["exp"].(float64)), expirationDeltaSeconds)
+	assert.InDelta(t, signInTime.Add(st.Cfg.TokenTTL).Unix(), int64(claims["exp"].(float64)), expirationDeltaSeconds)
 }
 
-func TestRegister_DuplicateUser(t *testing.T) {
+func TestSignUp_DuplicateUser(t *testing.T) {
 	ctx, st, tearDown := suite.New(t)
 	defer tearDown()
 
@@ -63,14 +63,14 @@ func TestRegister_DuplicateUser(t *testing.T) {
 	pass := gofakeit.Password(true, true, true, true, true, passDefaultLength)
 	pass2 := gofakeit.Password(true, true, true, true, true, passDefaultLength)
 
-	respReg, err := st.AuthClient.Register(ctx, &authv1.RegisterRequest{
+	respReg, err := st.AuthClient.SignUp(ctx, &authv1.SignUpRequest{
 		Email:    email,
 		Password: pass,
 	})
 	require.NoError(t, err)
 	assert.NotEmpty(t, respReg.GetId())
 
-	respReg2, err := st.AuthClient.Register(ctx, &authv1.RegisterRequest{
+	respReg2, err := st.AuthClient.SignUp(ctx, &authv1.SignUpRequest{
 		Email:    email,
 		Password: pass2,
 	})
@@ -80,7 +80,7 @@ func TestRegister_DuplicateUser(t *testing.T) {
 	assert.Equal(t, status.Code(err), codes.AlreadyExists)
 }
 
-func TestRegister_FailedCases(t *testing.T) {
+func TestSignUp_FailedCases(t *testing.T) {
 	ctx, st, tearDown := suite.New(t)
 	defer tearDown()
 
@@ -118,7 +118,7 @@ func TestRegister_FailedCases(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := st.AuthClient.Register(ctx, &authv1.RegisterRequest{
+			_, err := st.AuthClient.SignUp(ctx, &authv1.SignUpRequest{
 				Email:    tt.email,
 				Password: tt.pass,
 			})
@@ -129,7 +129,7 @@ func TestRegister_FailedCases(t *testing.T) {
 	}
 }
 
-func TestLogin_FailedCases(t *testing.T) {
+func TestSignIn_FailedCases(t *testing.T) {
 	ctx, st, tearDown := suite.New(t)
 	defer tearDown()
 
@@ -168,12 +168,12 @@ func TestLogin_FailedCases(t *testing.T) {
 		},
 	}
 
-	_, err := st.AuthClient.Register(ctx, &authv1.RegisterRequest{Email: validEmail, Password: validPass})
+	_, err := st.AuthClient.SignUp(ctx, &authv1.SignUpRequest{Email: validEmail, Password: validPass})
 	require.NoError(t, err)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := st.AuthClient.Login(ctx, &authv1.LoginRequest{
+			_, err := st.AuthClient.SignIn(ctx, &authv1.SignInRequest{
 				Email:    tt.email,
 				Password: tt.pass,
 			})

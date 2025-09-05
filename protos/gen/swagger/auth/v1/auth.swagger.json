@@ -16,14 +16,14 @@
     "application/json"
   ],
   "paths": {
-    "/v1/auth/login": {
+    "/v1/auth/signin": {
       "post": {
-        "operationId": "Auth_Login",
+        "operationId": "Auth_SignIn",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/authLoginResponse"
+              "$ref": "#/definitions/authSignInResponse"
             }
           },
           "default": {
@@ -39,7 +39,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/authLoginRequest"
+              "$ref": "#/definitions/authSignInRequest"
             }
           }
         ],
@@ -48,14 +48,14 @@
         ]
       }
     },
-    "/v1/auth/register": {
+    "/v1/auth/signup": {
       "post": {
-        "operationId": "Auth_Register",
+        "operationId": "Auth_SignUp",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/authRegisterResponse"
+              "$ref": "#/definitions/authSignUpResponse"
             }
           },
           "default": {
@@ -71,7 +71,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/authRegisterRequest"
+              "$ref": "#/definitions/authSignUpRequest"
             }
           }
         ],
@@ -82,7 +82,7 @@
     }
   },
   "definitions": {
-    "authLoginRequest": {
+    "authSignInRequest": {
       "type": "object",
       "properties": {
         "email": {
@@ -93,7 +93,7 @@
         }
       }
     },
-    "authLoginResponse": {
+    "authSignInResponse": {
       "type": "object",
       "properties": {
         "token": {
@@ -101,7 +101,7 @@
         }
       }
     },
-    "authRegisterRequest": {
+    "authSignUpRequest": {
       "type": "object",
       "properties": {
         "email": {
@@ -112,7 +112,7 @@
         }
       }
     },
-    "authRegisterResponse": {
+    "authSignUpResponse": {
       "type": "object",
       "properties": {
         "id": {

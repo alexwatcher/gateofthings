@@ -3,5 +3,5 @@ export const config = {
 };
 
 if (!config.apiUrl) {
-  throw new Error("❌ NEXT_PUBLIC_API_URL is not defined in .env.local");
+  //throw new Error("❌ NEXT_PUBLIC_API_URL is not defined in .env.local");
 }

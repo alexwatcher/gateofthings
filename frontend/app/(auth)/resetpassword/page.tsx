@@ -12,7 +12,7 @@ export default function ResetPasswordPage() {
   const handleRestore = (e: React.FormEvent) => {
     e.preventDefault();
     alert(t("restoreLinkSent"));
-    router.push("/login");
+    router.push("/signin");
   };
 
   return (

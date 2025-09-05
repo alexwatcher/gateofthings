@@ -1,0 +1,19 @@
+# Exclude temporary files and caches
+**/node_modules/
+**/.next/
+**/.cache/
+**/next-env.d.ts
+
+# Exclude development configuration files
+**/.env.development
+**/.env.test
+**/.env.local
+
+
+# Exclude
+**/.git
+**/.gitignore
+**/.dockerignore
+
+# Exclude docs
+**/README.md

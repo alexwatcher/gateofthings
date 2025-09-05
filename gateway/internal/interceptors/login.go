@@ -9,9 +9,9 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func MakeSetLoginCookie() func(ctx context.Context, w http.ResponseWriter, resp proto.Message) error {
+func MakeSetSignInCookie() func(ctx context.Context, w http.ResponseWriter, resp proto.Message) error {
 	return func(ctx context.Context, w http.ResponseWriter, resp proto.Message) error {
-		if r, ok := resp.(*authv1.LoginResponse); ok {
+		if r, ok := resp.(*authv1.SignInResponse); ok {
 
 			http.SetCookie(w, &http.Cookie{
 				Name:     "token",

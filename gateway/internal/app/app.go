@@ -42,10 +42,10 @@ func (a *App) MustRun(ctx context.Context) {
 // server can't be started, it returns an error.
 func (a *App) Run(ctx context.Context) error {
 	mux := runtime.NewServeMux(
-		runtime.WithForwardResponseOption(interceptors.MakeSetLoginCookie()),
+		runtime.WithForwardResponseOption(interceptors.MakeSetSignInCookie()),
 		runtime.WithMiddlewares(
 			middlewares.TracingMiddleware,
-			middlewares.MakeCSRFMiddleware([]string{"/v1/auth/login", "/v1/auth/register"}),
+			middlewares.MakeCSRFMiddleware([]string{"/v1/auth/signin", "/v1/auth/singup"}),
 		),
 	)
 
