@@ -12,5 +12,6 @@
   "dashboardDevices": "Devices",
   "dashboardStatistics": "Statistics",
   "settings": "Settings",
-  "signOut": "Sign out"
+  "signOut": "Sign out",
+  "signinError": "Sign In Error"
 }

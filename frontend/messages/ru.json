@@ -12,5 +12,6 @@
   "dashboardDevices": "Устройства",
   "dashboardStatistics": "Статистика",
   "settings": "Настройки",
-  "signOut": "Выйти"
+  "signOut": "Выйти",
+  "signinError": "Ошибка авторизации"
 }

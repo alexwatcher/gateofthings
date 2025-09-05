@@ -3,9 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
-import { config } from "@/lib/config";
 import { useNotification } from "@/context/NotificationContext";
+import { useConfig } from "@/context/ConfigContext";
+import Link from "next/link";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -13,6 +13,7 @@ export default function SignInPage() {
   const { notify } = useNotification();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const config = useConfig();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();

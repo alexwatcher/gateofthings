@@ -26,23 +26,21 @@ FROM base AS runner
 
 WORKDIR /app
 
-# COPY --from=builder /app/public ./public
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-COPY --from=builder /app/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN mkdir /app/config && chown -R nextjs:nodejs /app/config
 
 USER nextjs
 
 ENV NODE_ENV=production
+
 ENV NEXT_TELEMETRY_DISABLED=1
 
 EXPOSE 3000
 
-CMD ["npx", "next", "start", "-p", "3000", "-H", "0.0.0.0"]
+ENTRYPOINT ["npx", "next", "start", "-p", "3000", "-H", "0.0.0.0"]

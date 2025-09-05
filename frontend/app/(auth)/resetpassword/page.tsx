@@ -9,15 +9,15 @@ export default function ResetPasswordPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
 
-  const handleRestore = (e: React.FormEvent) => {
+  const handleReset = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(t("restoreLinkSent"));
-    router.push("/signin");
+    // alert(t("restoreLinkSent"));
+    // router.push("/signin");
   };
 
   return (
     <form
-      onSubmit={handleRestore}
+      onSubmit={handleReset}
       className="flex w-80 flex-col gap-4 rounded-xl border border-green-500 bg-black/80 p-6 shadow-[0_0_20px_#00ff00]"
     >
       <button

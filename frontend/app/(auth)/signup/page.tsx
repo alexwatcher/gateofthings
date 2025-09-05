@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useNotification } from "@/context/NotificationContext";
-import { config } from "@/lib/config";
+// import { useConfig } from "@/context/ConfigContext";
 
 export default function SignupPagePage() {
   const router = useRouter();
@@ -13,12 +13,13 @@ export default function SignupPagePage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  // const config = useConfig();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${config.apiUrl}/auth/signup`, {
+      const res = await fetch(`{config.apiUrl}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
