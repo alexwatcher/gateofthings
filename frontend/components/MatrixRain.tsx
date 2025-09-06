@@ -16,12 +16,11 @@ export default function MatrixRain() {
     const lettersArr = letters.split("");
 
     const fontSize = 16;
-    let columns = Math.floor(window.innerWidth / fontSize);
-    let drops: number[] = Array.from({ length: columns }, () =>
-      Math.floor(Math.random() * (window.innerHeight / fontSize))
-    );
+    let columns = 0;
+    let drops: number[] = [];
 
     function resizeCanvas() {
+      if (!canvas) return;
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       columns = Math.floor(canvas.width / fontSize);
@@ -34,6 +33,8 @@ export default function MatrixRain() {
     window.addEventListener("resize", resizeCanvas);
 
     function draw() {
+      if (!canvas || !ctx) return;
+
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
