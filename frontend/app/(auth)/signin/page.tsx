@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useNotification } from "@/context/NotificationContext";
-import { useConfig } from "@/context/ConfigContext";
 import Link from "next/link";
+import { getApiUrl } from "@/lib/getApiUrl";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -13,13 +13,15 @@ export default function SignInPage() {
   const { notify } = useNotification();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const config = useConfig();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.info("handleSignIn");
     try {
-      const res = await fetch(`${config.apiUrl}/auth/signin`, {
+      const apiUrl = getApiUrl();
+
+      const res = await fetch(`${apiUrl}/auth/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
