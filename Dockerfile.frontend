@@ -19,6 +19,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY frontend .
 
+# list of envs for substitution
+ENV NEXT_PUBLIC_API_URL=APP_NEXT_PUBLIC_API_URL
+
 RUN npm run build
 
 ### runner
@@ -29,16 +32,12 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/entrypoint.sh ./
 
-# COPY /app/.next/standalone ./
-
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
-RUN mkdir /app/config && chown -R nextjs:nodejs /app/config
-
-USER nextjs
+RUN chmod +x /app/entrypoint.sh
+RUN chown -R nextjs:nodejs /app/.next/static
 
 ENV NODE_ENV=production
 
@@ -52,29 +51,8 @@ ENV HOST=0.0.0.0
 
 EXPOSE 3000
 
-ENTRYPOINT ["npx", "next", "start", "-p", "3000", "-H", "0.0.0.0"]
+USER nextjs
 
-# FROM base AS runner
-# WORKDIR /app
+ENTRYPOINT ["/app/entrypoint.sh"]
 
-# RUN addgroup --system --gid 1001 nodejs
-# RUN adduser --system --uid 1001 nextjs
-
-# RUN mkdir .next
-# RUN chown nextjs:nodejs .next
-
-# COPY --from=builder /app/public ./public
-# COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-# COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# USER nextjs
-
-# EXPOSE 3000
-
-# ENV NODE_ENV production
-
-# ENV PORT 3000
-
-# ENV HOSTNAME "0.0.0.0"
-
-# CMD ["node", "server.js"]
+CMD ["node", "server.js"]

@@ -48,6 +48,13 @@ tasks:
       - |
         echo "Build Migration Image..."
         docker build -f Dockerfile.migrator -t got-migrator:latest .
+  build_frontend:
+    dir: "{{.TASKFILE_DIR}}"
+    desc: Build Frontend Image
+    cmds:
+      - |
+        echo "Build Migration Image..."
+        docker build -f Dockerfile.frontend -t got-frontend:latest .
   test_auth:
     dir: "{{.TASKFILE_DIR}}/auth/tests"
     desc: Run Auth tests

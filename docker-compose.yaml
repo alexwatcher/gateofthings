@@ -134,3 +134,12 @@ services:
             postgres:
                 condition: service_healthy
 
+    frontend:
+        image: got-frontend:latest
+        container_name: frontend
+        restart: "no"
+        environment:
+            API_URL: http://gateway:8080
+        depends_on:
+            gateway:
+                condition: service_healthy

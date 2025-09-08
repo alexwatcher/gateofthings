@@ -9,7 +9,6 @@
 **/.env.test
 **/.env.local
 
-
 # Exclude
 **/.git
 **/.gitignore
