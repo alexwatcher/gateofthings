@@ -44,7 +44,6 @@ export default function MatrixRain() {
       for (let i = 0; i < drops.length; i++) {
         const text = lettersArr[Math.floor(Math.random() * lettersArr.length)];
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
         if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
           drops[i] = 0;
         }
@@ -53,7 +52,6 @@ export default function MatrixRain() {
     }
 
     const interval = setInterval(draw, 50);
-
     return () => {
       clearInterval(interval);
       window.removeEventListener("resize", resizeCanvas);
