@@ -2,38 +2,43 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import { useNotification } from "@/context/NotificationContext";
 import Link from "next/link";
 
 export default function SignInPage() {
   const t = useTranslations();
+  const router = useRouter();
+  const { notify } = useNotification();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.info("handleSignIn: ", process.env.NEXT_PUBLIC_API_URL);
-    // try {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/signin`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        }
+      );
 
-    //   const res = await fetch(`${apiUrl}/auth/signin`, {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ username, password }),
-    //   });
+      if (!res.ok) {
+        throw new Error(`HTTP error: ${res.status}`);
+      }
 
-    //   if (!res.ok) {
-    //     throw new Error(`HTTP error: ${res.status}`);
-    //   }
+      const data = await res.json();
+      localStorage.setItem("token", data.token);
 
-    //   const data = await res.json();
-    //   localStorage.setItem("token", data.token);
-
-    //   notify(t("signinSuccess"), "success");
-    //   router.push("/dashboard");
-    // } catch (err) {
-    //   console.error("Signin failed:", err);
-    //   notify(t("signinError"), "error");
-    // }
+      notify(t("signinSuccess"), "success");
+      router.push("/dashboard");
+    } catch (err) {
+      console.error("Signin failed:", err);
+      notify(t("signinError"), "error");
+    }
   };
 
   return (
