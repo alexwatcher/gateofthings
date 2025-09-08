@@ -7,34 +7,34 @@ import "google/api/annotations.proto";
 option go_package = "auth.v1;authv1";
 
 service Auth {
-  rpc Register(RegisterRequest) returns (RegisterResponse) {
+  rpc SignUp(SignUpRequest) returns (SignUpResponse) {
     option (google.api.http) = {
-      post: "/v1/auth/register"
+      post: "/v1/auth/signup"
       body: "*"
     };
   }
-  rpc Login(LoginRequest) returns (LoginResponse) {
+  rpc SignIn(SignInRequest) returns (SignInResponse) {
     option (google.api.http) = {
-      post: "/v1/auth/login"
+      post: "/v1/auth/signin"
       body: "*"
     };
   }
 }
 
-message RegisterRequest {
+message SignUpRequest {
   string email = 1;
   string password = 2;
 };
 
-message RegisterResponse {
+message SignUpResponse {
   string id = 1;
 };
 
-message LoginRequest {
+message SignInRequest {
   string email = 1;
   string password = 2;
 };
 
-message LoginResponse {
+message SignInResponse {
   string token = 1;
 };

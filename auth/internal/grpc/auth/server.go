@@ -13,8 +13,8 @@ import (
 )
 
 type Auth interface {
-	Register(ctx context.Context, email string, password string) (id string, err error)
-	Login(ctx context.Context, login string, password string) (token string, err error)
+	SignUp(ctx context.Context, email string, password string) (id string, err error)
+	SignIn(ctx context.Context, email string, password string) (token string, err error)
 }
 
 type serverAPI struct {
@@ -26,19 +26,19 @@ func Register(gRPC *grpc.Server, auth Auth) {
 	authv1.RegisterAuthServer(gRPC, &serverAPI{auth: auth})
 }
 
-func (s *serverAPI) Register(ctx context.Context, req *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
-	id, err := s.auth.Register(ctx, req.Email, req.Password)
+func (s *serverAPI) SignUp(ctx context.Context, req *authv1.SignUpRequest) (*authv1.SignUpResponse, error) {
+	id, err := s.auth.SignUp(ctx, req.Email, req.Password)
 	if err != nil {
 		if errors.Is(err, repository.ErrUserAlreadyExists) {
 			return nil, status.Error(codes.AlreadyExists, "user already exists")
 		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &authv1.RegisterResponse{Id: id}, nil
+	return &authv1.SignUpResponse{Id: id}, nil
 }
 
-func (s *serverAPI) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
-	token, err := s.auth.Login(ctx, req.Email, req.Password)
+func (s *serverAPI) SignIn(ctx context.Context, req *authv1.SignInRequest) (*authv1.SignInResponse, error) {
+	token, err := s.auth.SignIn(ctx, req.Email, req.Password)
 	if err != nil {
 		if errors.Is(err, models.ErrInvalidCredentials) {
 			return nil, status.Error(codes.InvalidArgument, err.Error())
@@ -49,5 +49,5 @@ func (s *serverAPI) Login(ctx context.Context, req *authv1.LoginRequest) (*authv
 
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &authv1.LoginResponse{Token: token}, nil
+	return &authv1.SignInResponse{Token: token}, nil
 }

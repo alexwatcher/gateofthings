@@ -6,8 +6,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
-// "/v1/login"
-// "/v1/register"
 func MakeCSRFMiddleware(ignorePaths []string) func(next runtime.HandlerFunc) runtime.HandlerFunc {
 	return func(next runtime.HandlerFunc) runtime.HandlerFunc {
 		ignorePathMap := make(map[string]struct{}, len(ignorePaths))

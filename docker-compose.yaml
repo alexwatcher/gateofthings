@@ -107,13 +107,13 @@ services:
         environment:
             ENV: dev
             OPEN_API: swagger/auth/v1/
-            HTTP_PORT: 3000
+            HTTP_PORT: 8080
             AUTH_ADDRESS: auth:50051
             TELEMETRY_TRACE: otel-collector:4317
             TELEMETRY_METRICS: otel-collector:4317
             TELEMETRY_LOGS: otel-collector:4317
         ports:
-            - 3000:3000
+            - 8080:8080
         depends_on:
             postgres:
                 condition: service_healthy
@@ -134,3 +134,12 @@ services:
             postgres:
                 condition: service_healthy
 
+    frontend:
+        image: got-frontend:latest
+        container_name: frontend
+        restart: "no"
+        environment:
+            API_URL: http://gateway:8080
+        depends_on:
+            gateway:
+                condition: service_healthy

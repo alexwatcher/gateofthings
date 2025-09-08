@@ -3,21 +3,41 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useNotification } from "@/context/NotificationContext";
+// import { useConfig } from "@/context/ConfigContext";
 
 export default function SignupPagePage() {
-  const t = useTranslations();
   const router = useRouter();
+  const t = useTranslations();
+  const { notify } = useNotification();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  // const config = useConfig();
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password !== confirm) {
-      alert(t("passwordsDontMatch"));
-      return;
+
+    try {
+      const res = await fetch(`{config.apiUrl}/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error: ${res.status}`);
+      }
+
+      const data = await res.json();
+      localStorage.setItem("token", data.token);
+
+      notify(t("signupSuccess"), "success");
+      router.back();
+    } catch (err) {
+      console.error("Signup failed:", err);
+      notify(t("signupError"), "error");
     }
-    router.push("/dashboard");
   };
 
   return (

@@ -6,12 +6,12 @@ import HomePanel from "./components/homepanel";
 import DevicesPanel from "./components/devicespanel";
 import StatisticsPanel from "./components/statisticspanel";
 
+type PanelType = "home" | "devices" | "statistics";
+
 export default function DashboardLayout() {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activePanel, setActivePanel] = useState<
-    "home" | "devices" | "statistics"
-  >("home");
+  const [activePanel, setActivePanel] = useState<PanelType>("home");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -77,7 +77,7 @@ export default function DashboardLayout() {
           ].map((item) => (
             <button
               key={item.name}
-              onClick={() => setActivePanel(item.name as any)}
+              onClick={() => setActivePanel(item.name as PanelType)}
               className={`flex items-center justify-center gap-2 rounded-md border border-green-500 p-2 w-full h-10 hover:bg-green-500 hover:text-black ${
                 activePanel === item.name ? "bg-green-500 text-black" : ""
               } ${sidebarOpen ? "justify-start px-2" : ""}`}

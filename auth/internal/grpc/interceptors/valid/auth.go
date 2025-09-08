@@ -7,16 +7,16 @@ import (
 )
 
 func init() {
-	rulesMap[getStructId(&authv1.RegisterRequest{})] = func(s any) error {
-		rr := s.(*authv1.RegisterRequest)
+	rulesMap[getStructId(&authv1.SignUpRequest{})] = func(s any) error {
+		rr := s.(*authv1.SignUpRequest)
 		return validation.ValidateStruct(rr,
 			validation.Field(&rr.Email, validation.Required, is.EmailFormat),
 			validation.Field(&rr.Password, validation.Required, validation.Length(6, 128)),
 		)
 	}
 
-	rulesMap[getStructId(&authv1.LoginRequest{})] = func(s any) error {
-		lr := s.(*authv1.LoginRequest)
+	rulesMap[getStructId(&authv1.SignInRequest{})] = func(s any) error {
+		lr := s.(*authv1.SignInRequest)
 		return validation.ValidateStruct(lr,
 			validation.Field(&lr.Email, validation.Required, is.EmailFormat),
 			validation.Field(&lr.Password, validation.Required, validation.Length(6, 128)),
