@@ -19,7 +19,7 @@ tasks:
         go install github.com/pressly/goose/v3/cmd/goose@v3.25.0
   build:
     desc: Build
-    deps: [build_auth, build_gateway, build_migrator]
+    deps: [build_auth, build_gateway, build_migrator, build_frontend]
     cmds:
       - echo "Build services"
   test:
