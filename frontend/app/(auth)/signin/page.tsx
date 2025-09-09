@@ -42,9 +42,14 @@ export default function SignInPage() {
 
       notify(t("signinSuccess"), "info");
       router.push("/dashboard");
-    } catch (err: any) {
-      console.error("Signin failed:", err);
-      notify(err.message || t("signinError"), "error");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : typeof err === "string"
+          ? err
+          : t("signinError");
+      notify(message, "error");
     }
   };
 

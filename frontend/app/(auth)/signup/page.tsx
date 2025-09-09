@@ -45,9 +45,14 @@ export default function SignupPagePage() {
 
       notify(t("signupSuccess"), "info");
       router.back();
-    } catch (err: any) {
-      console.error("Signup failed:", err);
-      notify(err.message || t("signupError"), "error");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : typeof err === "string"
+          ? err
+          : t("signinError");
+      notify(message, "error");
     }
   };
 

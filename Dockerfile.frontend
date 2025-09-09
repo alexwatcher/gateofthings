@@ -37,7 +37,7 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/entrypoint.sh ./
 
 RUN chmod +x /app/entrypoint.sh
-RUN chown -R nextjs:nodejs /app/.next/static
+RUN chown -R nextjs:nodejs /app/.next
 
 ENV NODE_ENV=production
 
