@@ -10,33 +10,44 @@ export default function SignupPagePage() {
   const router = useRouter();
   const t = useTranslations();
   const { notify } = useNotification();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  // const config = useConfig();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const res = await fetch(`{config.apiUrl}/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!res.ok) {
-        throw new Error(`HTTP error: ${res.status}`);
+      if (confirm !== password) {
+        notify(t("passwordsDontMatch"), "error");
+        return;
       }
 
-      const data = await res.json();
-      localStorage.setItem("token", data.token);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/signup`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email, password: password }),
+        }
+      );
 
-      notify(t("signupSuccess"), "success");
+      if (!res.ok) {
+        let errorMsg = t("signupError");
+        try {
+          const errData = await res.json();
+          if (errData?.message) {
+            errorMsg = errData.message;
+          }
+        } catch {}
+        throw new Error(errorMsg);
+      }
+
+      notify(t("signupSuccess"), "info");
       router.back();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Signup failed:", err);
-      notify(t("signupError"), "error");
+      notify(err.message || t("signupError"), "error");
     }
   };
 
@@ -60,8 +71,8 @@ export default function SignupPagePage() {
       <input
         type="text"
         placeholder={t("emailPlaceholder")}
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
         className="rounded-lg border border-green-500 bg-black p-2 text-green-400 placeholder-green-700 focus:outline-none focus:shadow-[0_0_10px_#00ff00]"
       />
 

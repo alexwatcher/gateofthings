@@ -13,5 +13,9 @@
   "dashboardStatistics": "Statistics",
   "settings": "Settings",
   "signOut": "Sign out",
-  "signinError": "Sign In Error"
+  "signinError": "Sign In Error",
+  "passwordsDontMatch": "Passwrod does not match",
+  "signupError": "Sign Up Error",
+  "signupSuccess": "Sign Up Success",
+  "signinSuccess": "Sign In Success"
 }

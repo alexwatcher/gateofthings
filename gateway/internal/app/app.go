@@ -45,7 +45,7 @@ func (a *App) Run(ctx context.Context) error {
 		runtime.WithForwardResponseOption(interceptors.MakeSetSignInCookie()),
 		runtime.WithMiddlewares(
 			middlewares.TracingMiddleware,
-			middlewares.MakeCSRFMiddleware([]string{"/v1/auth/signin", "/v1/auth/singup"}),
+			middlewares.MakeCSRFMiddleware([]string{"/v1/auth/signin", "/v1/auth/signup"}),
 		),
 	)
 

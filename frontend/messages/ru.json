@@ -13,5 +13,9 @@
   "dashboardStatistics": "Статистика",
   "settings": "Настройки",
   "signOut": "Выйти",
-  "signinError": "Ошибка авторизации"
+  "signinError": "Ошибка авторизации",
+  "passwordsDontMatch": "Пароль не совпадает",
+  "signupError": "Ошибка регистрации",
+  "signupSuccess": "Регистрация прошла успешно",
+  "signinSuccess": "Ошибка авторизации"
 }

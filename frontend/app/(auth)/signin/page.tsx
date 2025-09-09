@@ -10,7 +10,7 @@ export default function SignInPage() {
   const t = useTranslations();
   const router = useRouter();
   const { notify } = useNotification();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -18,26 +18,33 @@ export default function SignInPage() {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/signin`,
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/signin`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password }),
+          body: JSON.stringify({ email, password }),
         }
       );
 
       if (!res.ok) {
-        throw new Error(`HTTP error: ${res.status}`);
+        let errorMsg = t("signinError");
+        try {
+          const errData = await res.json();
+          if (errData?.message) {
+            errorMsg = errData.message;
+          }
+        } catch {}
+        throw new Error(errorMsg);
       }
 
       const data = await res.json();
       localStorage.setItem("token", data.token);
 
-      notify(t("signinSuccess"), "success");
+      notify(t("signinSuccess"), "info");
       router.push("/dashboard");
-    } catch (err) {
+    } catch (err: any) {
       console.error("Signin failed:", err);
-      notify(t("signinError"), "error");
+      notify(err.message || t("signinError"), "error");
     }
   };
 
@@ -53,8 +60,8 @@ export default function SignInPage() {
       <input
         type="text"
         placeholder={t("emailPlaceholder")}
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
         className="rounded-lg border border-green-500 bg-black p-2 text-green-400 placeholder-green-700 focus:outline-none focus:shadow-[0_0_10px_#00ff00]"
       />
 
