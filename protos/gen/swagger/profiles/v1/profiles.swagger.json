@@ -16,14 +16,14 @@
     "application/json"
   ],
   "paths": {
-    "/v1/profiles": {
-      "post": {
-        "operationId": "Profiles_Create",
+    "/v1/profiles/me": {
+      "get": {
+        "operationId": "Profiles_GetMe",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/authCreateResponse"
+              "$ref": "#/definitions/authGetMeResponse"
             }
           },
           "default": {
@@ -35,12 +35,10 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/authCreateRequest"
-            }
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -50,7 +48,7 @@
     }
   },
   "definitions": {
-    "authCreateRequest": {
+    "authCreateResponse": {
       "type": "object",
       "properties": {
         "email": {
@@ -58,10 +56,10 @@
         }
       }
     },
-    "authCreateResponse": {
+    "authGetMeResponse": {
       "type": "object",
       "properties": {
-        "id": {
+        "email": {
           "type": "string"
         }
       }

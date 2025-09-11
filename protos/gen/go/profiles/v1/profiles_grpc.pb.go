@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Profiles_Create_FullMethodName = "/auth.Profiles/Create"
+	Profiles_GetMe_FullMethodName  = "/auth.Profiles/GetMe"
 )
 
 // ProfilesClient is the client API for Profiles service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProfilesClient interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
+	GetMe(ctx context.Context, in *GetMeRequest, opts ...grpc.CallOption) (*GetMeResponse, error)
 }
 
 type profilesClient struct {
@@ -47,11 +49,22 @@ func (c *profilesClient) Create(ctx context.Context, in *CreateRequest, opts ...
 	return out, nil
 }
 
+func (c *profilesClient) GetMe(ctx context.Context, in *GetMeRequest, opts ...grpc.CallOption) (*GetMeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMeResponse)
+	err := c.cc.Invoke(ctx, Profiles_GetMe_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProfilesServer is the server API for Profiles service.
 // All implementations must embed UnimplementedProfilesServer
 // for forward compatibility.
 type ProfilesServer interface {
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
+	GetMe(context.Context, *GetMeRequest) (*GetMeResponse, error)
 	mustEmbedUnimplementedProfilesServer()
 }
 
@@ -64,6 +77,9 @@ type UnimplementedProfilesServer struct{}
 
 func (UnimplementedProfilesServer) Create(context.Context, *CreateRequest) (*CreateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedProfilesServer) GetMe(context.Context, *GetMeRequest) (*GetMeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMe not implemented")
 }
 func (UnimplementedProfilesServer) mustEmbedUnimplementedProfilesServer() {}
 func (UnimplementedProfilesServer) testEmbeddedByValue()                  {}
@@ -104,6 +120,24 @@ func _Profiles_Create_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Profiles_GetMe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProfilesServer).GetMe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Profiles_GetMe_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProfilesServer).GetMe(ctx, req.(*GetMeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Profiles_ServiceDesc is the grpc.ServiceDesc for Profiles service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +148,10 @@ var Profiles_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Create",
 			Handler:    _Profiles_Create_Handler,
+		},
+		{
+			MethodName: "GetMe",
+			Handler:    _Profiles_GetMe_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
