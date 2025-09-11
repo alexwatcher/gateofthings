@@ -8,6 +8,7 @@ import (
 	"github.com/Masterminds/squirrel"
 	"github.com/alexwatcher/gateofthings/auth/internal/models"
 	"github.com/alexwatcher/gateofthings/auth/internal/repository"
+	spgsql "github.com/alexwatcher/gateofthings/shared/pkg/repository/postgresql"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -26,7 +27,7 @@ func (r *UsersRepo) Insert(ctx context.Context, email string, passhash []byte) (
 
 	id := uuid.New()
 
-	sql, args, err := sqlBuilder.
+	sql, args, err := spgsql.SqlBuilder.
 		Insert("auth_users").
 		Columns("id", "email", "password_hash").
 		Values(id, email, passhash).
@@ -38,7 +39,7 @@ func (r *UsersRepo) Insert(ctx context.Context, email string, passhash []byte) (
 	_, err = r.conn.Exec(ctx, sql, args...)
 	if err != nil {
 		var pgErr *pgconn.PgError
-		if errors.As(err, &pgErr) && pgErr.Code == errCodeUniqueViolation {
+		if errors.As(err, &pgErr) && pgErr.Code == spgsql.ErrCodeUniqueViolation {
 			return "", fmt.Errorf("%s: %w", op, repository.ErrUserAlreadyExists)
 		}
 		return "", fmt.Errorf("%s: %w", op, err)
@@ -51,7 +52,7 @@ func (r *UsersRepo) Get(ctx context.Context, email string) (models.User, error) 
 	op := "repository.users.Select"
 
 	var user models.User
-	query, args, err := sqlBuilder.
+	query, args, err := spgsql.SqlBuilder.
 		Select("id", "email", "password_hash").
 		From("auth_users").
 		Where(squirrel.Eq{"email": email}).

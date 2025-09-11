@@ -6,6 +6,7 @@ WORKDIR /app
 
 COPY go.work go.work.sum ./
 COPY auth/go.mod auth/go.sum ./auth/
+COPY profiles/go.mod profiles/go.sum ./profiles/
 COPY gateway/go.mod gateway/go.sum ./gateway/
 COPY shared/go.mod shared/go.sum ./shared/
 COPY protos/go.mod protos/go.sum ./protos/

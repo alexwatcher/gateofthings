@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-var sqlBuilder = sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+var SqlBuilder = sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 
 func NewConnection(ctx context.Context, cfg config.DatabaseConfig) (*pgx.Conn, error) {
 	sslMode := "disable"

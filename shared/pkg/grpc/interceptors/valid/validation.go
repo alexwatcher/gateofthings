@@ -11,12 +11,8 @@ import (
 
 var rulesMap = map[string]func(any) error{}
 
-func getStructId(s any) string {
-	t := reflect.TypeOf(s)
-	if t.Kind() == reflect.Ptr {
-		t = t.Elem()
-	}
-	return t.PkgPath() + "/" + t.Name()
+func RegisterRule(s any, f func(s any) error) {
+	rulesMap[getStructId(s)] = f
 }
 
 func UnaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
@@ -26,4 +22,12 @@ func UnaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServ
 		}
 	}
 	return handler(ctx, req)
+}
+
+func getStructId(s any) string {
+	t := reflect.TypeOf(s)
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+	return t.PkgPath() + "/" + t.Name()
 }
