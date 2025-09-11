@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package auth;
+
+import "google/api/annotations.proto";
+
+option go_package = "profiles.v1;profilesv1";
+
+service Profiles {
+  rpc Create(CreateRequest) returns (CreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/profiles"
+      body: "*"
+    };
+  }
+}
+
+message CreateRequest {
+  string email = 1;
+};
+
+message CreateResponse {
+  string id = 1;
+};
