@@ -141,6 +141,8 @@ services:
             METRICS_PASS: metrics_pass
             AUTH_USER: auth_user
             AUTH_PASS: auth_pass
+            PROFILES_USER: profiles_user
+            PROFILES_PASS: profiles_pass
         depends_on:
             postgres:
                 condition: service_healthy
