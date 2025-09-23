@@ -33,14 +33,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "email",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
         "tags": [
           "Profiles"
         ]
@@ -51,7 +43,7 @@
     "authCreateResponse": {
       "type": "object",
       "properties": {
-        "email": {
+        "id": {
           "type": "string"
         }
       }
@@ -59,8 +51,23 @@
     "authGetMeResponse": {
       "type": "object",
       "properties": {
-        "email": {
+        "porfile": {
+          "$ref": "#/definitions/authProfile"
+        }
+      }
+    },
+    "authProfile": {
+      "type": "object",
+      "properties": {
+        "id": {
           "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },

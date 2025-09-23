@@ -16,18 +16,23 @@ service Profiles {
   }
 }
 
+message Profile {
+  string id = 1;
+  string name = 2;
+  bytes avatar = 3;
+}
+
 message CreateRequest {
-  string email = 1;
+  Profile porfile = 1;
 };
 
 message CreateResponse {
-  string email = 1;
+  string id = 1;
 };
 
 message GetMeRequest {
-  string email = 1;
 };
 
 message GetMeResponse {
-  string email = 1;
+  Profile porfile = 1;
 };

@@ -32,7 +32,6 @@ func New(ctx context.Context, gRPConfig config.GRPCSrvConfig, dbConfig config.Da
 		panic(err)
 	}
 	repo := postgresql.NewProfilesRepo(dbConn)
-	_ = repo
 
 	profilesService := services.NewProfiles(repo)
 	gRPCServer := grpc.NewServer(

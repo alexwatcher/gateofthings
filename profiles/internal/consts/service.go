@@ -1,6 +1,6 @@
 package consts
 
 const (
-	ServiceName    = "auth"
+	ServiceName    = "profiles"
 	ServiceVersion = "dev"
 )
