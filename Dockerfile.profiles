@@ -1,0 +1,33 @@
+FROM golang:1.25.0-alpine AS builder
+
+RUN apk add --no-cache git
+
+WORKDIR /app
+
+COPY go.work go.work.sum ./
+COPY auth/go.mod auth/go.sum ./auth/
+COPY profiles/go.mod profiles/go.sum ./profiles/
+COPY gateway/go.mod gateway/go.sum ./gateway/
+COPY shared/go.mod shared/go.sum ./shared/
+COPY protos/go.mod protos/go.sum ./protos/
+
+RUN go work sync && go mod download
+
+COPY profiles/ ./profiles/
+COPY shared/ ./shared/
+COPY protos/ ./protos/
+
+RUN go build -o ./profiles/profiles ./profiles/cmd/profiles/main.go
+
+FROM alpine:3.22.1
+
+RUN apk add --no-cache ca-certificates
+
+WORKDIR /app
+
+COPY --from=builder /app/profiles/profiles .
+COPY --from=builder /app/profiles/migrations ./migrations
+
+EXPOSE 50051
+
+CMD ["./profiles"]

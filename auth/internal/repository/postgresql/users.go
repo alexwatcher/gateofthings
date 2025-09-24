@@ -49,7 +49,7 @@ func (r *UsersRepo) Insert(ctx context.Context, email string, passhash []byte) (
 }
 
 func (r *UsersRepo) Get(ctx context.Context, email string) (models.User, error) {
-	op := "repository.users.Select"
+	op := "repository.users.Get"
 
 	var user models.User
 	query, args, err := spgsql.SqlBuilder.

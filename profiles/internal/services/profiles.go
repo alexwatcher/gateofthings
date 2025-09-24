@@ -25,7 +25,7 @@ func NewProfiles(repo ProfilesRepo) *Profiles {
 
 func (p *Profiles) Create(ctx context.Context, profile *models.Profile) (string, error) {
 	op := "profiles.create"
-	log := slog.With("op", op, "id", profile.ID, "name", profile.Name)
+	log := slog.With("op", op, "id", profile.Id, "name", profile.Name)
 
 	log.Info("create profile")
 	profileId, err := p.repo.Insert(ctx, profile)

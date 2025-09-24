@@ -26,23 +26,32 @@ func Register(gRPC *grpc.Server, profiles Profiles) {
 }
 
 func (s *serverAPI) Create(ctx context.Context, in *profilesv1.CreateRequest) (*profilesv1.CreateResponse, error) {
-	_, err := s.profiles.Create(ctx, &models.Profile{})
+	profile := &models.Profile{
+		Id:     in.Porfile.Id,
+		Name:   in.Porfile.Name,
+		Avatar: in.Porfile.Avatar,
+	}
+	id, err := s.profiles.Create(ctx, profile)
 	if err != nil {
 		if errors.Is(err, models.ErrProfileAlreadyExists) {
 			return nil, status.Error(codes.AlreadyExists, err.Error())
 		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &profilesv1.CreateResponse{}, nil
+	return &profilesv1.CreateResponse{Id: id}, nil
 }
 
 func (s *serverAPI) GetMe(ctx context.Context, in *profilesv1.GetMeRequest) (*profilesv1.GetMeResponse, error) {
-	_, err := s.profiles.GetMe(ctx)
+	profile, err := s.profiles.GetMe(ctx)
 	if err != nil {
 		if errors.Is(err, models.ErrProfileNotFound) {
 			return nil, status.Error(codes.NotFound, err.Error())
 		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &profilesv1.GetMeResponse{}, nil
+	return &profilesv1.GetMeResponse{Porfile: &profilesv1.Profile{
+		Id:     profile.Id,
+		Name:   profile.Name,
+		Avatar: profile.Avatar,
+	}}, nil
 }

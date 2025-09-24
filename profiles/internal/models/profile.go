@@ -1,7 +1,7 @@
 package models
 
 type Profile struct {
-	ID     string
+	Id     string
 	Name   string
 	Avatar []byte
 }
