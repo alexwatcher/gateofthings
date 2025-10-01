@@ -10,6 +10,7 @@ import (
 	"github.com/alexwatcher/gateofthings/profiles/internal/repository/postgresql"
 	"github.com/alexwatcher/gateofthings/profiles/internal/services"
 	"github.com/alexwatcher/gateofthings/shared/pkg/config"
+	"github.com/alexwatcher/gateofthings/shared/pkg/grpc/interceptors/metadataextractor"
 	"github.com/alexwatcher/gateofthings/shared/pkg/grpc/interceptors/tracing"
 	"github.com/alexwatcher/gateofthings/shared/pkg/grpc/interceptors/valid"
 	sharedpgsql "github.com/alexwatcher/gateofthings/shared/pkg/repository/postgresql"
@@ -38,6 +39,7 @@ func New(ctx context.Context, gRPConfig config.GRPCSrvConfig, dbConfig config.Da
 		grpc.ChainUnaryInterceptor(
 			tracing.TracingInterceptor(),
 			valid.UnaryInterceptor,
+			metadataextractor.ExtractMetadataInterceptor,
 		),
 	)
 	grpcprofiles.Register(gRPCServer, profilesService)
