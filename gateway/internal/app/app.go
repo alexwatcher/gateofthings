@@ -42,15 +42,16 @@ func (a *App) MustRun(ctx context.Context) {
 // server can't be started, it returns an error.
 func (a *App) Run(ctx context.Context) error {
 	mux := runtime.NewServeMux(
-		runtime.WithForwardResponseOption(interceptors.MakeSetSignInCookie()),
+		runtime.WithForwardResponseOption(interceptors.SetSignInCookies),
 		runtime.WithMiddlewares(
 			middlewares.TracingMiddleware,
 			middlewares.MakeCSRFMiddleware([]string{"/v1/auth/signin", "/v1/auth/signup"}),
+			middlewares.MakeAuthTokenMiddleware([]string{"/v1/auth/signin", "/v1/auth/signup"}),
 		),
 	)
 
 	opts := []grpc.DialOption{
-		grpc.WithChainUnaryInterceptor(interceptors.MakeTracingClientInterceptor()),
+		grpc.WithChainUnaryInterceptor(interceptors.TracingClientInterceptor),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
 	err := authv1.RegisterAuthHandlerFromEndpoint(ctx, mux, a.authConfig.Address, opts)
