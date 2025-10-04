@@ -34,7 +34,7 @@ tasks:
       - |
         echo "Build Auth Image..."
         docker build -f Dockerfile.auth -t got-auth:latest .
-  build_auth:
+  build_profiles:
     dir: "{{.TASKFILE_DIR}}"
     desc: Build Profiles image
     cmds:
