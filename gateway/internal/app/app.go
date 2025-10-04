@@ -6,8 +6,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/alexwatcher/gateofthings/gateway/internal/interceptors"
-	"github.com/alexwatcher/gateofthings/gateway/internal/middlewares"
+	"github.com/alexwatcher/gateofthings/gateway/internal/grpc/interceptors"
+	"github.com/alexwatcher/gateofthings/gateway/internal/http/middlewares"
 	"github.com/alexwatcher/gateofthings/gateway/internal/openapi"
 	authv1 "github.com/alexwatcher/gateofthings/protos/gen/go/auth/v1"
 	"github.com/alexwatcher/gateofthings/shared/pkg/config"

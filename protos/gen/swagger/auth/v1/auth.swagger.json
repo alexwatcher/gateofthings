@@ -35,16 +35,12 @@
         },
         "parameters": [
           {
-            "name": "email",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/authSignInRequest"
+            }
           }
         ],
         "tags": [
@@ -86,6 +82,17 @@
     }
   },
   "definitions": {
+    "authSignInRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
     "authSignInResponse": {
       "type": "object",
       "properties": {

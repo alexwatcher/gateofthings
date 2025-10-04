@@ -228,10 +228,10 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"&\n" +
 	"\x0eSignInResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token2\xa5\x01\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token2\xa8\x01\n" +
 	"\x04Auth\x12O\n" +
-	"\x06SignUp\x12\x13.auth.SignUpRequest\x1a\x14.auth.SignUpResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/auth/signup\x12L\n" +
-	"\x06SignIn\x12\x13.auth.SignInRequest\x1a\x14.auth.SignInResponse\"\x17\x82\xd3\xe4\x93\x02\x11\"\x0f/v1/auth/signinB\x10Z\x0eauth.v1;authv1b\x06proto3"
+	"\x06SignUp\x12\x13.auth.SignUpRequest\x1a\x14.auth.SignUpResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/auth/signup\x12O\n" +
+	"\x06SignIn\x12\x13.auth.SignInRequest\x1a\x14.auth.SignInResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/auth/signinB\x10Z\x0eauth.v1;authv1b\x06proto3"
 
 var (
 	file_auth_v1_auth_proto_rawDescOnce sync.Once
