@@ -17,14 +17,14 @@ func RegisteraOpenAPIEndpoint(mux *runtime.ServeMux, dir string) error {
 	}
 	_ = openAPIdata
 
-	mux.HandlePath(http.MethodGet, "/swagger.json", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
+	mux.HandlePath(http.MethodGet, "/api.swagger.json", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(openAPIdata)
 		w.WriteHeader(http.StatusOK)
 	})
 
 	swaggerHandler := httpSwagger.Handler(
-		httpSwagger.URL("/swagger.json"),
+		httpSwagger.URL("/api.swagger.json"),
 	)
 	err = mux.HandlePath(http.MethodGet, "/swagger/*", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 		swaggerHandler(w, r)
