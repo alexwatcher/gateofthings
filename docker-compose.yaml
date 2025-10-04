@@ -117,7 +117,7 @@ services:
         container_name: gateway
         environment:
             ENV: dev
-            OPEN_API: swagger/auth/v1/
+            OPEN_API: swagger/
             HTTP_PORT: 8080
             AUTH_ADDRESS: auth:50051
             TELEMETRY_TRACE: otel-collector:4317

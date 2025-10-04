@@ -7,6 +7,9 @@
   "tags": [
     {
       "name": "Auth"
+    },
+    {
+      "name": "Profiles"
     }
   ],
   "consumes": [
@@ -79,9 +82,62 @@
           "Auth"
         ]
       }
+    },
+    "/v1/profiles/me": {
+      "get": {
+        "operationId": "Profiles_GetMe",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/authGetMeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      }
     }
   },
   "definitions": {
+    "authCreateResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "authGetMeResponse": {
+      "type": "object",
+      "properties": {
+        "porfile": {
+          "$ref": "#/definitions/authProfile"
+        }
+      }
+    },
+    "authProfile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
     "authSignInRequest": {
       "type": "object",
       "properties": {
