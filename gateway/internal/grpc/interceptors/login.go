@@ -12,7 +12,6 @@ import (
 func MakeSetSignInCookie() func(ctx context.Context, w http.ResponseWriter, resp proto.Message) error {
 	return func(ctx context.Context, w http.ResponseWriter, resp proto.Message) error {
 		if r, ok := resp.(*authv1.SignInResponse); ok {
-
 			http.SetCookie(w, &http.Cookie{
 				Name:     "token",
 				Value:    r.Token,

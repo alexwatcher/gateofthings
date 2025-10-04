@@ -13,11 +13,11 @@ COPY protos/go.mod protos/go.sum ./protos/
 
 RUN go work sync && go mod download
 
-COPY gateway/ ./gateway/
+COPY profiles/ ./profiles/
 COPY shared/ ./shared/
 COPY protos/ ./protos/
 
-RUN go build -o ./gateway/gateway ./gateway/cmd/gateway/main.go
+RUN go build -o ./profiles/profiles ./profiles/cmd/profiles/main.go
 
 FROM alpine:3.22.1
 
@@ -25,9 +25,9 @@ RUN apk add --no-cache ca-certificates
 
 WORKDIR /app
 
-COPY --from=builder /app/gateway/gateway .
-COPY protos/gen/swagger ./swagger
+COPY --from=builder /app/profiles/profiles .
+COPY --from=builder /app/profiles/migrations ./migrations
 
-EXPOSE 8080
+EXPOSE 50051
 
-CMD ["./gateway"]
+CMD ["./profiles"]

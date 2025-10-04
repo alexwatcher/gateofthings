@@ -6,8 +6,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/alexwatcher/gateofthings/gateway/internal/interceptors"
-	"github.com/alexwatcher/gateofthings/gateway/internal/middlewares"
+	"github.com/alexwatcher/gateofthings/gateway/internal/grpc/interceptors"
+	"github.com/alexwatcher/gateofthings/gateway/internal/http/middlewares"
 	"github.com/alexwatcher/gateofthings/gateway/internal/openapi"
 	authv1 "github.com/alexwatcher/gateofthings/protos/gen/go/auth/v1"
 	"github.com/alexwatcher/gateofthings/shared/pkg/config"
@@ -42,15 +42,16 @@ func (a *App) MustRun(ctx context.Context) {
 // server can't be started, it returns an error.
 func (a *App) Run(ctx context.Context) error {
 	mux := runtime.NewServeMux(
-		runtime.WithForwardResponseOption(interceptors.MakeSetSignInCookie()),
+		runtime.WithForwardResponseOption(interceptors.SetSignInCookies),
 		runtime.WithMiddlewares(
 			middlewares.TracingMiddleware,
 			middlewares.MakeCSRFMiddleware([]string{"/v1/auth/signin", "/v1/auth/signup"}),
+			middlewares.MakeAuthTokenMiddleware([]string{"/v1/auth/signin", "/v1/auth/signup"}),
 		),
 	)
 
 	opts := []grpc.DialOption{
-		grpc.WithChainUnaryInterceptor(interceptors.MakeTracingClientInterceptor()),
+		grpc.WithChainUnaryInterceptor(interceptors.TracingClientInterceptor),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
 	err := authv1.RegisterAuthHandlerFromEndpoint(ctx, mux, a.authConfig.Address, opts)

@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"log/slog"
 	"net"
-	"time"
 
-	grpcauth "github.com/alexwatcher/gateofthings/auth/internal/grpc/auth"
-	"github.com/alexwatcher/gateofthings/auth/internal/repository/postgresql"
-	"github.com/alexwatcher/gateofthings/auth/internal/services"
+	grpcprofiles "github.com/alexwatcher/gateofthings/profiles/internal/grpc/profiles"
+	"github.com/alexwatcher/gateofthings/profiles/internal/repository/postgresql"
+	"github.com/alexwatcher/gateofthings/profiles/internal/services"
 	"github.com/alexwatcher/gateofthings/shared/pkg/config"
+	"github.com/alexwatcher/gateofthings/shared/pkg/grpc/interceptors/metadataextractor"
 	"github.com/alexwatcher/gateofthings/shared/pkg/grpc/interceptors/tracing"
 	"github.com/alexwatcher/gateofthings/shared/pkg/grpc/interceptors/valid"
 	sharedpgsql "github.com/alexwatcher/gateofthings/shared/pkg/repository/postgresql"
@@ -25,24 +25,24 @@ type App struct {
 // New initializes a new instance of the App struct with a gRPC server
 // listening on the specified port. It registers the authentication
 // service with the server and returns the configured App instance.
-func New(ctx context.Context, gRPConfig config.GRPCSrvConfig, dbConfig config.DatabaseConfig, secret string, tokenTTL time.Duration) *App {
+func New(ctx context.Context, gRPConfig config.GRPCSrvConfig, dbConfig config.DatabaseConfig) *App {
 
 	dbConn, err := sharedpgsql.NewConnection(ctx, dbConfig)
 	if err != nil {
 		slog.Error("failed to connect to database", "error", err)
 		panic(err)
 	}
-	repo := postgresql.NewUsersRepo(dbConn)
+	repo := postgresql.NewProfilesRepo(dbConn)
 
-	authService := services.NewAuth(repo, secret, tokenTTL)
-
+	profilesService := services.NewProfiles(repo)
 	gRPCServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			tracing.TracingInterceptor(),
 			valid.UnaryInterceptor,
+			metadataextractor.ExtractMetadataInterceptor,
 		),
 	)
-	grpcauth.Register(gRPCServer, authService)
+	grpcprofiles.Register(gRPCServer, profilesService)
 	return &App{
 		gRPCServer: gRPCServer,
 		gRPConfig:  gRPConfig,

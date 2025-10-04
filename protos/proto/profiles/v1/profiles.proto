@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package auth;
+
+import "google/api/annotations.proto";
+
+option go_package = "profiles.v1;profilesv1";
+
+service Profiles {
+  rpc Create(CreateRequest) returns (CreateResponse);
+
+  rpc GetMe(GetMeRequest) returns (GetMeResponse) {
+    option (google.api.http) = {
+      get: "/v1/profiles/me"
+    };
+  }
+}
+
+message Profile {
+  string id = 1;
+  string name = 2;
+  bytes avatar = 3;
+}
+
+message CreateRequest {
+  Profile porfile = 1;
+};
+
+message CreateResponse {
+  string id = 1;
+};
+
+message GetMeRequest {
+};
+
+message GetMeResponse {
+  Profile porfile = 1;
+};

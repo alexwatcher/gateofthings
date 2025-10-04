@@ -7,9 +7,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/alexwatcher/gateofthings/auth/internal/app"
-	"github.com/alexwatcher/gateofthings/auth/internal/config"
-	"github.com/alexwatcher/gateofthings/auth/internal/consts"
+	"github.com/alexwatcher/gateofthings/profiles/internal/app"
+	"github.com/alexwatcher/gateofthings/profiles/internal/config"
+	"github.com/alexwatcher/gateofthings/profiles/internal/consts"
 	sharedpgsql "github.com/alexwatcher/gateofthings/shared/pkg/migrator/postgresql"
 	"github.com/alexwatcher/gateofthings/shared/pkg/telemetry"
 )
@@ -28,7 +28,7 @@ func main() {
 	slog.Info("end migration")
 
 	slog.Info("starting application")
-	application := app.New(ctx, cfg.GRPC, cfg.Database, cfg.Secret, cfg.TokenTTL)
+	application := app.New(ctx, cfg.GRPC, cfg.Database)
 	go application.MustRun(ctx)
 
 	stop := make(chan os.Signal, 1)
