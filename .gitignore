@@ -9,6 +9,9 @@
 *.dylib
 __debug_bin*
 
+# Mac OS
+.DS_Store
+
 # Test binary, built with `go test -c`
 *.test
 

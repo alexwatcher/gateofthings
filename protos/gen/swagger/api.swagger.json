@@ -21,6 +21,7 @@
   "paths": {
     "/v1/auth/signin": {
       "post": {
+        "summary": "Authenticate user",
         "operationId": "Auth_SignIn",
         "responses": {
           "200": {
@@ -53,6 +54,7 @@
     },
     "/v1/auth/signup": {
       "post": {
+        "summary": "Register a new user",
         "operationId": "Auth_SignUp",
         "responses": {
           "200": {
@@ -80,6 +82,38 @@
         ],
         "tags": [
           "Auth"
+        ]
+      }
+    },
+    "/v1/profiles": {
+      "post": {
+        "operationId": "Profiles_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/profilesCreateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/profilesCreateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Profiles"
         ]
       }
     },
@@ -111,10 +145,12 @@
       "type": "object",
       "properties": {
         "email": {
-          "type": "string"
+          "type": "string",
+          "example": "user@got.com"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "example": "Passw0rd"
         }
       }
     },
@@ -130,10 +166,12 @@
       "type": "object",
       "properties": {
         "email": {
-          "type": "string"
+          "type": "string",
+          "example": "user@got.com"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "example": "Passw0rd"
         }
       }
     },
@@ -142,6 +180,14 @@
       "properties": {
         "id": {
           "type": "string"
+        }
+      }
+    },
+    "profilesCreateRequest": {
+      "type": "object",
+      "properties": {
+        "porfile": {
+          "$ref": "#/definitions/profilesProfile"
         }
       }
     },

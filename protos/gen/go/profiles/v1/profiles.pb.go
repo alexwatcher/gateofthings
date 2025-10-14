@@ -265,9 +265,9 @@ const file_profiles_v1_profiles_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x0e\n" +
 	"\fGetMeRequest\"<\n" +
 	"\rGetMeResponse\x12+\n" +
-	"\aporfile\x18\x01 \x01(\v2\x11.profiles.ProfileR\aporfile2\x9a\x01\n" +
-	"\bProfiles\x12;\n" +
-	"\x06Create\x12\x17.profiles.CreateRequest\x1a\x18.profiles.CreateResponse\x12Q\n" +
+	"\aporfile\x18\x01 \x01(\v2\x11.profiles.ProfileR\aporfile2\xb3\x01\n" +
+	"\bProfiles\x12T\n" +
+	"\x06Create\x12\x17.profiles.CreateRequest\x1a\x18.profiles.CreateResponse\"\x17\x82\xd3\xe4\x93\x02\x11:\x01*\"\f/v1/profiles\x12Q\n" +
 	"\x05GetMe\x12\x16.profiles.GetMeRequest\x1a\x17.profiles.GetMeResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/v1/profiles/meB\x18Z\x16profiles.v1;profilesv1b\x06proto3"
 
 var (

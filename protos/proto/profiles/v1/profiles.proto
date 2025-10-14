@@ -7,7 +7,12 @@ import "google/api/annotations.proto";
 option go_package = "profiles.v1;profilesv1";
 
 service Profiles {
-  rpc Create(CreateRequest) returns (CreateResponse);
+  rpc Create(CreateRequest) returns (CreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/profiles"
+      body: "*"
+    };
+  }
 
   rpc GetMe(GetMeRequest) returns (GetMeResponse) {
     option (google.api.http) = {

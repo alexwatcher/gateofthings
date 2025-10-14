@@ -52,7 +52,7 @@ func (a *App) Run(ctx context.Context) error {
 		runtime.WithForwardResponseRewriter(grpcoptions.RemoveSignInToken),
 		runtime.WithMiddlewares(
 			httpmiddlewares.TracingMiddleware,
-			httpmiddlewares.MakeCSRFMiddleware([]string{"/v1/auth/signin", "/v1/auth/signup"}),
+			// httpmiddlewares.MakeCSRFMiddleware([]string{"/v1/auth/signin", "/v1/auth/signup"}),
 			httpmiddlewares.MakeAuthTokenMiddleware(a.tokenSecret, []string{"/v1/auth/signin", "/v1/auth/signup"}),
 		),
 	)

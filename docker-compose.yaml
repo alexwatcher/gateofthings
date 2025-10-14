@@ -94,6 +94,7 @@ services:
             TOKEN_TTL: 1h
             TOKEN_SECRET: secret
             GRPC_PORT: 50051
+            GRPC_TIMEOUT: 1s
             TELEMETRY_TRACE: otel-collector:4317
             TELEMETRY_METRICS: otel-collector:4317
             TELEMETRY_LOGS: otel-collector:4317
@@ -112,6 +113,31 @@ services:
             migrator:
                 condition: service_completed_successfully
     
+    profiles:
+        image: got-profiles:latest
+        container_name: profiles
+        environment:
+            ENV: dev
+            GRPC_PORT: 50051
+            GRPC_TIMEOUT: 1s
+            TELEMETRY_TRACE: otel-collector:4317
+            TELEMETRY_METRICS: otel-collector:4317
+            TELEMETRY_LOGS: otel-collector:4317
+            DB_HOST: postgres
+            DB_PORT: 5432
+            DB_SSL: false
+            DB_NAME: postgres
+            DB_USER: profiles_user
+            DB_PASSWORD: profiles_pass
+            DB_MIGRATIONS: ./migrations
+        ports:
+            - 50052:50051
+        depends_on:
+            postgres:
+                condition: service_healthy
+            migrator:
+                condition: service_completed_successfully
+
     gateway:
         image: got-gateway:latest
         container_name: gateway

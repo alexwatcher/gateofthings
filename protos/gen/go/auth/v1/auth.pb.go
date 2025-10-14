@@ -7,6 +7,7 @@
 package authv1
 
 import (
+	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -218,20 +219,22 @@ var File_auth_v1_auth_proto protoreflect.FileDescriptor
 
 const file_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x12auth/v1/auth.proto\x12\x04auth\x1a\x1cgoogle/api/annotations.proto\"A\n" +
-	"\rSignUpRequest\x12\x14\n" +
-	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\" \n" +
+	"\x12auth/v1/auth.proto\x12\x04auth\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"g\n" +
+	"\rSignUpRequest\x12)\n" +
+	"\x05email\x18\x01 \x01(\tB\x13\x92A\x10J\x0e\"user@got.com\"R\x05email\x12+\n" +
+	"\bpassword\x18\x02 \x01(\tB\x0f\x92A\fJ\n" +
+	"\"Passw0rd\"R\bpassword\" \n" +
 	"\x0eSignUpResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"A\n" +
-	"\rSignInRequest\x12\x14\n" +
-	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"&\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"g\n" +
+	"\rSignInRequest\x12)\n" +
+	"\x05email\x18\x01 \x01(\tB\x13\x92A\x10J\x0e\"user@got.com\"R\x05email\x12+\n" +
+	"\bpassword\x18\x02 \x01(\tB\x0f\x92A\fJ\n" +
+	"\"Passw0rd\"R\bpassword\"&\n" +
 	"\x0eSignInResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token2\xa8\x01\n" +
-	"\x04Auth\x12O\n" +
-	"\x06SignUp\x12\x13.auth.SignUpRequest\x1a\x14.auth.SignUpResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/auth/signup\x12O\n" +
-	"\x06SignIn\x12\x13.auth.SignInRequest\x1a\x14.auth.SignInResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/auth/signinB\x10Z\x0eauth.v1;authv1b\x06proto3"
+	"\x05token\x18\x01 \x01(\tR\x05token2\xd6\x01\n" +
+	"\x04Auth\x12g\n" +
+	"\x06SignUp\x12\x13.auth.SignUpRequest\x1a\x14.auth.SignUpResponse\"2\x92A\x15\x12\x13Register a new user\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/auth/signup\x12e\n" +
+	"\x06SignIn\x12\x13.auth.SignInRequest\x1a\x14.auth.SignInResponse\"0\x92A\x13\x12\x11Authenticate user\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/auth/signinB\x10Z\x0eauth.v1;authv1b\x06proto3"
 
 var (
 	file_auth_v1_auth_proto_rawDescOnce sync.Once
