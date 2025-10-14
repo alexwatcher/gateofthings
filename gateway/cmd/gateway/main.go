@@ -23,7 +23,7 @@ func main() {
 	telemetry.MustInitMeter(context.Background(), res, cfg.Telemetry.MetricsEndpoint)
 
 	slog.Info("starting application")
-	application := app.New(ctx, cfg.HTTP, cfg.Auth, cfg.OpenAPI)
+	application := app.New(ctx, cfg.HTTP, cfg.Auth, cfg.Profiles, cfg.TokenSecret, cfg.OpenAPI)
 	go application.MustRun(ctx)
 
 	stop := make(chan os.Signal, 1)

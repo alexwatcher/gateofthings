@@ -6,10 +6,12 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/alexwatcher/gateofthings/gateway/internal/grpc/interceptors"
-	"github.com/alexwatcher/gateofthings/gateway/internal/http/middlewares"
+	grpcinterceptors "github.com/alexwatcher/gateofthings/gateway/internal/grpc/interceptors"
+	grpcoptions "github.com/alexwatcher/gateofthings/gateway/internal/grpc/options"
+	httpmiddlewares "github.com/alexwatcher/gateofthings/gateway/internal/http/middlewares"
 	"github.com/alexwatcher/gateofthings/gateway/internal/openapi"
 	authv1 "github.com/alexwatcher/gateofthings/protos/gen/go/auth/v1"
+	profilesv1 "github.com/alexwatcher/gateofthings/protos/gen/go/profiles/v1"
 	"github.com/alexwatcher/gateofthings/shared/pkg/config"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -17,17 +19,21 @@ import (
 )
 
 type App struct {
-	httpConfig config.HTTPSrvConfig
-	authConfig config.GRPCClnConfig
-	server     *http.Server
-	openAPI    string
+	httpConfig     config.HTTPSrvConfig
+	authConfig     config.GRPCClnConfig
+	profilesConfig config.GRPCClnConfig
+	tokenSecret    string
+	openAPI        string
+	server         *http.Server
 }
 
-func New(ctx context.Context, httpConfig config.HTTPSrvConfig, authConfig config.GRPCClnConfig, openAPI string) *App {
+func New(ctx context.Context, httpConfig config.HTTPSrvConfig, authConfig config.GRPCClnConfig, profilesConfig config.GRPCClnConfig, tokenSecret string, openAPI string) *App {
 	return &App{
-		httpConfig: httpConfig,
-		authConfig: authConfig,
-		openAPI:    openAPI,
+		httpConfig:     httpConfig,
+		authConfig:     authConfig,
+		profilesConfig: profilesConfig,
+		tokenSecret:    tokenSecret,
+		openAPI:        openAPI,
 	}
 }
 
@@ -42,23 +48,27 @@ func (a *App) MustRun(ctx context.Context) {
 // server can't be started, it returns an error.
 func (a *App) Run(ctx context.Context) error {
 	mux := runtime.NewServeMux(
-		runtime.WithForwardResponseOption(interceptors.SetSignInCookies),
+		runtime.WithForwardResponseOption(grpcoptions.SetSignInCookies),
+		runtime.WithForwardResponseRewriter(grpcoptions.RemoveSignInToken),
 		runtime.WithMiddlewares(
-			middlewares.TracingMiddleware,
-			middlewares.MakeCSRFMiddleware([]string{"/v1/auth/signin", "/v1/auth/signup"}),
-			middlewares.MakeAuthTokenMiddleware([]string{"/v1/auth/signin", "/v1/auth/signup"}),
+			httpmiddlewares.TracingMiddleware,
+			httpmiddlewares.MakeCSRFMiddleware([]string{"/v1/auth/signin", "/v1/auth/signup"}),
+			httpmiddlewares.MakeAuthTokenMiddleware(a.tokenSecret, []string{"/v1/auth/signin", "/v1/auth/signup"}),
 		),
 	)
 
 	opts := []grpc.DialOption{
-		grpc.WithChainUnaryInterceptor(interceptors.TracingClientInterceptor),
+		grpc.WithChainUnaryInterceptor(grpcinterceptors.TracingClientInterceptor),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
 	err := authv1.RegisterAuthHandlerFromEndpoint(ctx, mux, a.authConfig.Address, opts)
 	if err != nil {
-		return fmt.Errorf("app.run: register http endpoint: %w", err)
+		return fmt.Errorf("app.run: register auth http endpoint: %w", err)
 	}
-
+	err = profilesv1.RegisterProfilesHandlerFromEndpoint(ctx, mux, a.profilesConfig.Address, opts)
+	if err != nil {
+		return fmt.Errorf("app.run: register profiles http endpoint: %w", err)
+	}
 	err = openapi.RegisteraOpenAPIEndpoint(mux, a.openAPI)
 	if err != nil {
 		return fmt.Errorf("app.run: register openapi endpoint: %w", err)

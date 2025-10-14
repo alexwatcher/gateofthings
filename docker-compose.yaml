@@ -92,7 +92,7 @@ services:
         environment:
             ENV: dev
             TOKEN_TTL: 1h
-            SECRET: secret
+            TOKEN_SECRET: secret
             GRPC_PORT: 50051
             TELEMETRY_TRACE: otel-collector:4317
             TELEMETRY_METRICS: otel-collector:4317
@@ -117,9 +117,11 @@ services:
         container_name: gateway
         environment:
             ENV: dev
+            TOKEN_SECRET: secret
             OPEN_API: swagger/
             HTTP_PORT: 8080
             AUTH_ADDRESS: auth:50051
+            PROFILES_ADDRESS: profiles:50051
             TELEMETRY_TRACE: otel-collector:4317
             TELEMETRY_METRICS: otel-collector:4317
             TELEMETRY_LOGS: otel-collector:4317

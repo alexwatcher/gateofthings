@@ -17,6 +17,16 @@ tasks:
         go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.27.3
         go install github.com/envoyproxy/protoc-gen-validate@v1.2.1
         go install github.com/pressly/goose/v3/cmd/goose@v3.25.0
+  up:
+    desc: Up
+    cmds:
+      - echo "Up services"
+      - docker compose up -d --pull never
+  down:
+    desc: Down
+    cmds:
+      - echo "Down services"
+      - docker compose down -v
   build:
     desc: Build
     deps: [build_auth, build_gateway, build_migrator, build_frontend]

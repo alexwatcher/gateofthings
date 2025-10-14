@@ -43,7 +43,7 @@ func TestSignUp_SingIn_Success(t *testing.T) {
 	assert.NotEmpty(t, respSignIn.GetToken())
 
 	token, err := jwt.Parse(respSignIn.GetToken(), func(t *jwt.Token) (interface{}, error) {
-		return []byte(st.Cfg.Secret), nil
+		return []byte(st.Cfg.TokenSecret), nil
 	})
 	require.NoError(t, err)
 

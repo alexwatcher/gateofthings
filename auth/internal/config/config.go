@@ -8,12 +8,12 @@ import (
 )
 
 type Config struct {
-	Env       string               `env:"ENV" envDefault:"local"`
-	Secret    string               `env:"SECRET,required"`
-	TokenTTL  time.Duration        `env:"TOKEN_TTL,required"`
-	Telemetry scfg.TelemetryConfig `envPrefix:"TELEMETRY_"`
-	GRPC      scfg.GRPCSrvConfig   `envPrefix:"GRPC_"`
-	Database  scfg.DatabaseConfig  `envPrefix:"DB_"`
+	Env         string               `env:"ENV" envDefault:"local"`
+	TokenSecret string               `env:"TOKEN_SECRET,required"`
+	TokenTTL    time.Duration        `env:"TOKEN_TTL,required"`
+	Telemetry   scfg.TelemetryConfig `envPrefix:"TELEMETRY_"`
+	GRPC        scfg.GRPCSrvConfig   `envPrefix:"GRPC_"`
+	Database    scfg.DatabaseConfig  `envPrefix:"DB_"`
 }
 
 // MustLoad loads configuration from environment variables into a Config instance.

@@ -34,7 +34,8 @@ tasks:
         mkdir -p {{.OUT_DIR}}/go
         mkdir -p {{.OUT_DIR}}/swagger
         FILES=$(find {{.PROTO_DIR}} -name '*.proto')
-        echo "Found proto files: ${FILES}"
+        echo "Found proto files:"
+        echo "${FILES}"
         protoc \
           {{.INCLUDE_PROTOBUF_PATHS}} \
           -I {{.PROTO_DIR}} \

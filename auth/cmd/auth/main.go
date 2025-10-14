@@ -28,7 +28,7 @@ func main() {
 	slog.Info("end migration")
 
 	slog.Info("starting application")
-	application := app.New(ctx, cfg.GRPC, cfg.Database, cfg.Secret, cfg.TokenTTL)
+	application := app.New(ctx, cfg.GRPC, cfg.Database, cfg.TokenSecret, cfg.TokenTTL)
 	go application.MustRun(ctx)
 
 	stop := make(chan os.Signal, 1)

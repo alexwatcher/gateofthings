@@ -254,21 +254,21 @@ var File_profiles_v1_profiles_proto protoreflect.FileDescriptor
 
 const file_profiles_v1_profiles_proto_rawDesc = "" +
 	"\n" +
-	"\x1aprofiles/v1/profiles.proto\x12\x04auth\x1a\x1cgoogle/api/annotations.proto\"E\n" +
+	"\x1aprofiles/v1/profiles.proto\x12\bprofiles\x1a\x1cgoogle/api/annotations.proto\"E\n" +
 	"\aProfile\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
-	"\x06avatar\x18\x03 \x01(\fR\x06avatar\"8\n" +
-	"\rCreateRequest\x12'\n" +
-	"\aporfile\x18\x01 \x01(\v2\r.auth.ProfileR\aporfile\" \n" +
+	"\x06avatar\x18\x03 \x01(\fR\x06avatar\"<\n" +
+	"\rCreateRequest\x12+\n" +
+	"\aporfile\x18\x01 \x01(\v2\x11.profiles.ProfileR\aporfile\" \n" +
 	"\x0eCreateResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x0e\n" +
-	"\fGetMeRequest\"8\n" +
-	"\rGetMeResponse\x12'\n" +
-	"\aporfile\x18\x01 \x01(\v2\r.auth.ProfileR\aporfile2\x8a\x01\n" +
-	"\bProfiles\x123\n" +
-	"\x06Create\x12\x13.auth.CreateRequest\x1a\x14.auth.CreateResponse\x12I\n" +
-	"\x05GetMe\x12\x12.auth.GetMeRequest\x1a\x13.auth.GetMeResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/v1/profiles/meB\x18Z\x16profiles.v1;profilesv1b\x06proto3"
+	"\fGetMeRequest\"<\n" +
+	"\rGetMeResponse\x12+\n" +
+	"\aporfile\x18\x01 \x01(\v2\x11.profiles.ProfileR\aporfile2\x9a\x01\n" +
+	"\bProfiles\x12;\n" +
+	"\x06Create\x12\x17.profiles.CreateRequest\x1a\x18.profiles.CreateResponse\x12Q\n" +
+	"\x05GetMe\x12\x16.profiles.GetMeRequest\x1a\x17.profiles.GetMeResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/v1/profiles/meB\x18Z\x16profiles.v1;profilesv1b\x06proto3"
 
 var (
 	file_profiles_v1_profiles_proto_rawDescOnce sync.Once
@@ -284,19 +284,19 @@ func file_profiles_v1_profiles_proto_rawDescGZIP() []byte {
 
 var file_profiles_v1_profiles_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_profiles_v1_profiles_proto_goTypes = []any{
-	(*Profile)(nil),        // 0: auth.Profile
-	(*CreateRequest)(nil),  // 1: auth.CreateRequest
-	(*CreateResponse)(nil), // 2: auth.CreateResponse
-	(*GetMeRequest)(nil),   // 3: auth.GetMeRequest
-	(*GetMeResponse)(nil),  // 4: auth.GetMeResponse
+	(*Profile)(nil),        // 0: profiles.Profile
+	(*CreateRequest)(nil),  // 1: profiles.CreateRequest
+	(*CreateResponse)(nil), // 2: profiles.CreateResponse
+	(*GetMeRequest)(nil),   // 3: profiles.GetMeRequest
+	(*GetMeResponse)(nil),  // 4: profiles.GetMeResponse
 }
 var file_profiles_v1_profiles_proto_depIdxs = []int32{
-	0, // 0: auth.CreateRequest.porfile:type_name -> auth.Profile
-	0, // 1: auth.GetMeResponse.porfile:type_name -> auth.Profile
-	1, // 2: auth.Profiles.Create:input_type -> auth.CreateRequest
-	3, // 3: auth.Profiles.GetMe:input_type -> auth.GetMeRequest
-	2, // 4: auth.Profiles.Create:output_type -> auth.CreateResponse
-	4, // 5: auth.Profiles.GetMe:output_type -> auth.GetMeResponse
+	0, // 0: profiles.CreateRequest.porfile:type_name -> profiles.Profile
+	0, // 1: profiles.GetMeResponse.porfile:type_name -> profiles.Profile
+	1, // 2: profiles.Profiles.Create:input_type -> profiles.CreateRequest
+	3, // 3: profiles.Profiles.GetMe:input_type -> profiles.GetMeRequest
+	2, // 4: profiles.Profiles.Create:output_type -> profiles.CreateResponse
+	4, // 5: profiles.Profiles.GetMe:output_type -> profiles.GetMeResponse
 	4, // [4:6] is the sub-list for method output_type
 	2, // [2:4] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

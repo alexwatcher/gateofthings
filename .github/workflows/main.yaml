@@ -29,6 +29,14 @@ jobs:
           tags: |
             type=edge
             type=semver,pattern={{version}}
+      - name: Docker meta (Profiles)
+        id: meta_profiles
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/got-profiles
+          tags: |
+            type=edge
+            type=semver,pattern={{version}}
       - name: Docker meta (Gateway)
         id: meta_gateway
         uses: docker/metadata-action@v5
@@ -80,6 +88,12 @@ jobs:
           for tag in $(echo "${{ steps.meta_auth.outputs.tags }}" | tr ',' ' '); do
             echo "Tagging images as: $tag"
             docker tag got-auth:latest "$tag"
+            docker push "$tag"
+          done
+          echo "Tag & Push Profiles"
+          for tag in $(echo "${{ steps.meta_profiles.outputs.tags }}" | tr ',' ' '); do
+            echo "Tagging images as: $tag"
+            docker tag got-profiles:latest "$tag"
             docker push "$tag"
           done
           echo "Tag & Push Gateway"

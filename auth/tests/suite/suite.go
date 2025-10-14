@@ -22,11 +22,11 @@ import (
 const testsDuration = 120 * time.Second
 
 var cfg = &config.Config{
-	Env:       "test",
-	TokenTTL:  time.Minute * 10,
-	Secret:    "test",
-	Telemetry: scfg.TelemetryConfig{},
-	GRPC:      scfg.GRPCSrvConfig{},
+	Env:         "test",
+	TokenTTL:    time.Minute * 10,
+	TokenSecret: "test",
+	Telemetry:   scfg.TelemetryConfig{},
+	GRPC:        scfg.GRPCSrvConfig{},
 	Database: scfg.DatabaseConfig{
 		Host:       "postgres",
 		Port:       5432,
@@ -155,7 +155,7 @@ func mustSetupAuth(testName string, pool *dockertest.Pool, cfg *config.Config, n
 		Env: []string{
 			fmt.Sprintf("ENV=%s", cfg.Env),
 			fmt.Sprintf("TOKEN_TTL=%v", cfg.TokenTTL),
-			fmt.Sprintf("SECRET=%s", cfg.Secret),
+			fmt.Sprintf("TOKEN_SECRET=%s", cfg.TokenSecret),
 			fmt.Sprintf("GRPC_PORT=%d", port),
 			fmt.Sprintf("DB_HOST=%s", cfg.Database.Host),
 			fmt.Sprintf("DB_PORT=%d", cfg.Database.Port),

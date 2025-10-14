@@ -15,7 +15,6 @@ func RegisteraOpenAPIEndpoint(mux *runtime.ServeMux, dir string) error {
 	if err != nil {
 		return fmt.Errorf("app.openapi: %w", err)
 	}
-	_ = openAPIdata
 
 	mux.HandlePath(http.MethodGet, "/api.swagger.json", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 		w.Header().Set("Content-Type", "application/json")
@@ -35,6 +34,7 @@ func RegisteraOpenAPIEndpoint(mux *runtime.ServeMux, dir string) error {
 	return nil
 }
 
+// TODO: use single file
 // loadOpenAPIs load open api files from direcotory
 // and merge them into single open api file
 func loadOpenAPIs(dir string) ([]byte, error) {
@@ -51,8 +51,6 @@ func loadOpenAPIs(dir string) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-
-		// TODO: merge openapi files into one
 		return data, nil
 	}
 	return nil, nil

@@ -25,7 +25,7 @@ type App struct {
 // New initializes a new instance of the App struct with a gRPC server
 // listening on the specified port. It registers the authentication
 // service with the server and returns the configured App instance.
-func New(ctx context.Context, gRPConfig config.GRPCSrvConfig, dbConfig config.DatabaseConfig, secret string, tokenTTL time.Duration) *App {
+func New(ctx context.Context, gRPConfig config.GRPCSrvConfig, dbConfig config.DatabaseConfig, tokenSecret string, tokenTTL time.Duration) *App {
 
 	dbConn, err := sharedpgsql.NewConnection(ctx, dbConfig)
 	if err != nil {
@@ -34,7 +34,7 @@ func New(ctx context.Context, gRPConfig config.GRPCSrvConfig, dbConfig config.Da
 	}
 	repo := postgresql.NewUsersRepo(dbConn)
 
-	authService := services.NewAuth(repo, secret, tokenTTL)
+	authService := services.NewAuth(repo, tokenSecret, tokenTTL)
 
 	gRPCServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(

@@ -6,11 +6,13 @@ import (
 )
 
 type Config struct {
-	Env       string               `env:"ENV" envDefault:"local"`
-	OpenAPI   string               `env:"OPEN_API"`
-	Telemetry scfg.TelemetryConfig `envPrefix:"TELEMETRY_"`
-	HTTP      scfg.HTTPSrvConfig   `envPrefix:"HTTP_"`
-	Auth      scfg.GRPCClnConfig   `envPrefix:"AUTH_"`
+	Env         string               `env:"ENV" envDefault:"local"`
+	TokenSecret string               `env:"TOKEN_SECRET,required"`
+	OpenAPI     string               `env:"OPEN_API"`
+	Telemetry   scfg.TelemetryConfig `envPrefix:"TELEMETRY_"`
+	HTTP        scfg.HTTPSrvConfig   `envPrefix:"HTTP_"`
+	Auth        scfg.GRPCClnConfig   `envPrefix:"AUTH_"`
+	Profiles    scfg.GRPCClnConfig   `envPrefix:"PROFILES_"`
 }
 
 // MustLoad loads configuration from environment variables into a Config instance.

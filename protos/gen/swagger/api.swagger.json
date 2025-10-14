@@ -90,7 +90,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/authGetMeResponse"
+              "$ref": "#/definitions/profilesGetMeResponse"
             }
           },
           "default": {
@@ -107,37 +107,6 @@
     }
   },
   "definitions": {
-    "authCreateResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
-    },
-    "authGetMeResponse": {
-      "type": "object",
-      "properties": {
-        "porfile": {
-          "$ref": "#/definitions/authProfile"
-        }
-      }
-    },
-    "authProfile": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "avatar": {
-          "type": "string",
-          "format": "byte"
-        }
-      }
-    },
     "authSignInRequest": {
       "type": "object",
       "properties": {
@@ -173,6 +142,37 @@
       "properties": {
         "id": {
           "type": "string"
+        }
+      }
+    },
+    "profilesCreateResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "profilesGetMeResponse": {
+      "type": "object",
+      "properties": {
+        "porfile": {
+          "$ref": "#/definitions/profilesProfile"
+        }
+      }
+    },
+    "profilesProfile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },

@@ -68,7 +68,7 @@ func RegisterProfilesHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/auth.Profiles/GetMe", runtime.WithHTTPPathPattern("/v1/profiles/me"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/profiles.Profiles/GetMe", runtime.WithHTTPPathPattern("/v1/profiles/me"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -126,7 +126,7 @@ func RegisterProfilesHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/auth.Profiles/GetMe", runtime.WithHTTPPathPattern("/v1/profiles/me"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/profiles.Profiles/GetMe", runtime.WithHTTPPathPattern("/v1/profiles/me"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return

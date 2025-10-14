@@ -3,16 +3,18 @@ package middlewares
 import (
 	"net/http"
 
+	"github.com/alexwatcher/gateofthings/shared/pkg/contextutils"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
-func MakeAuthTokenMiddleware(ignorePaths []string) func(next runtime.HandlerFunc) runtime.HandlerFunc {
+func MakeAuthTokenMiddleware(tokenSecret string, ignorePaths []string) func(next runtime.HandlerFunc) runtime.HandlerFunc {
 	return func(next runtime.HandlerFunc) runtime.HandlerFunc {
 		ignorePathMap := make(map[string]struct{}, len(ignorePaths))
 		for _, path := range ignorePaths {
 			ignorePathMap[path] = struct{}{}
 		}
+		tokenSecretData := []byte(tokenSecret)
 
 		return func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 			if _, ok := ignorePathMap[r.URL.Path]; !ok {
@@ -20,16 +22,18 @@ func MakeAuthTokenMiddleware(ignorePaths []string) func(next runtime.HandlerFunc
 				cookies := r.CookiesNamed("token")
 				if len(cookies) > 0 && len(cookies[0].Value) > 0 {
 					token := cookies[0].Value
-
 					jwtToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-						return nil, nil
+						return tokenSecretData, nil
 					})
 
 					if err != nil || !jwtToken.Valid {
 						// remove token
 						http.SetCookie(w, &http.Cookie{
-							Name:   "token",
-							MaxAge: 0,
+							Name:     "token",
+							MaxAge:   0,
+							Path:     "/",
+							HttpOnly: true,
+							Secure:   true,
 						})
 						http.Error(w, "invalid token", http.StatusForbidden)
 						return
@@ -43,7 +47,7 @@ func MakeAuthTokenMiddleware(ignorePaths []string) func(next runtime.HandlerFunc
 						}
 					}
 				}
-				r.Header.Set("X-User-ID", userId)
+				r = r.WithContext(contextutils.ContextWithXUserId(r.Context(), userId))
 			}
 			next(w, r, pathParams)
 		}

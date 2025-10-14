@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Profiles_Create_FullMethodName = "/auth.Profiles/Create"
-	Profiles_GetMe_FullMethodName  = "/auth.Profiles/GetMe"
+	Profiles_Create_FullMethodName = "/profiles.Profiles/Create"
+	Profiles_GetMe_FullMethodName  = "/profiles.Profiles/GetMe"
 )
 
 // ProfilesClient is the client API for Profiles service.
@@ -142,7 +142,7 @@ func _Profiles_GetMe_Handler(srv interface{}, ctx context.Context, dec func(inte
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Profiles_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "auth.Profiles",
+	ServiceName: "profiles.Profiles",
 	HandlerType: (*ProfilesServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
