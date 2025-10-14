@@ -29,7 +29,7 @@ tasks:
       - docker compose down -v
   build:
     desc: Build
-    deps: [build_auth, build_gateway, build_migrator, build_frontend]
+    deps: [build_auth, build_profiles, build_gateway, build_migrator, build_frontend]
     cmds:
       - echo "Build services"
   test:
