@@ -11,8 +11,10 @@ exporters:
   debug: {}
   file:
     path: /var/log/otel_collector/received_logs.json
-  loki:
-    endpoint: http://loki:3100/loki/api/v1/push
+  otlphttp:
+    endpoint: http://loki:3100/otlp
+    tls:
+      insecure: true
   otlp/tempo:
     endpoint: tempo:4317
     tls:
@@ -31,7 +33,7 @@ service:
   pipelines:
     logs:
       receivers: [otlp]
-      exporters: [loki]
+      exporters: [otlphttp]
     metrics:
       receivers: [otlp]
       exporters: [prometheus]
