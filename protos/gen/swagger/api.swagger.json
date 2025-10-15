@@ -85,14 +85,36 @@
         ]
       }
     },
-    "/v1/profiles": {
-      "post": {
-        "operationId": "Profiles_Create",
+    "/v1/profiles/me": {
+      "get": {
+        "summary": "Get user profile",
+        "operationId": "Profiles_GetMyProfile",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/profilesCreateResponse"
+              "$ref": "#/definitions/profilesGetMyProfileResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      },
+      "put": {
+        "summary": "Update user profile",
+        "operationId": "Profiles_UpdateMyProfile",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/profilesUpdateMyProfileResponse"
             }
           },
           "default": {
@@ -108,32 +130,10 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/profilesCreateRequest"
+              "$ref": "#/definitions/profilesUpdateMyProfileRequest"
             }
           }
         ],
-        "tags": [
-          "Profiles"
-        ]
-      }
-    },
-    "/v1/profiles/me": {
-      "get": {
-        "operationId": "Profiles_GetMe",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/profilesGetMeResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
         "tags": [
           "Profiles"
         ]
@@ -183,23 +183,7 @@
         }
       }
     },
-    "profilesCreateRequest": {
-      "type": "object",
-      "properties": {
-        "porfile": {
-          "$ref": "#/definitions/profilesProfile"
-        }
-      }
-    },
-    "profilesCreateResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
-    },
-    "profilesGetMeResponse": {
+    "profilesGetMyProfileResponse": {
       "type": "object",
       "properties": {
         "porfile": {
@@ -213,14 +197,38 @@
         "id": {
           "type": "string"
         },
+        "isProvisioned": {
+          "type": "boolean"
+        },
+        "properties": {
+          "$ref": "#/definitions/profilesProfileProperties"
+        }
+      }
+    },
+    "profilesProfileProperties": {
+      "type": "object",
+      "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "example": "user"
         },
         "avatar": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "example": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABFUlEQVR4AeyV7a7CIBBEe3z/d+69B7KAJAqYVv+QOO4HMDu7aPs4juP8JRTwX/93ny2gTOA8z+ObiEsvAoADSHkg+XCtlRwyp74oAqJ7k+FfbVtufVEEGEBWB/daawWeBFzd8Su+KK4tAiB3bRLQpN+BDpB8wLD4wJPvItRcxL0FTCUUASma+ALSv6XfardQifv1V/GyAIkgi7BoANaLy7UsIAp6GEhXoN/mjWcxLaAtALWwhaDG7T7XRpgWIBHUQsY94P16v994KADyfbt5BU4CGB4ZCggGGJN9sncowE6CeNXOnB0KsCjMd+9+AXNnpgRIeBe2gD2BPYE9gT2Bhy+MFj5yjXtrbhU9R8Qtz+1XYNF3+AMAAP//LiLZaAAAAAZJREFUAwBFN5PQ5zM7eQAAAABJRU5ErkJgggAA"
         }
       }
+    },
+    "profilesUpdateMyProfileRequest": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "$ref": "#/definitions/profilesProfileProperties"
+        }
+      }
+    },
+    "profilesUpdateMyProfileResponse": {
+      "type": "object"
     },
     "protobufAny": {
       "type": "object",

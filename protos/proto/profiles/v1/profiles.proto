@@ -3,41 +3,60 @@ syntax = "proto3";
 package profiles;
 
 import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "profiles.v1;profilesv1";
 
 service Profiles {
-  rpc Create(CreateRequest) returns (CreateResponse) {
-    option (google.api.http) = {
-      post: "/v1/profiles"
-      body: "*"
-    };
-  }
-
-  rpc GetMe(GetMeRequest) returns (GetMeResponse) {
+  rpc GetMyProfile(GetMyProfileRequest) returns (GetMyProfileResponse) {
     option (google.api.http) = {
       get: "/v1/profiles/me"
     };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Get user profile"
+    };
   }
+
+  rpc UpdateMyProfile(UpdateMyProfileRequest) returns (UpdateMyProfileResponse) {
+    option (google.api.http) = {
+      put: "/v1/profiles/me"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Update user profile"
+    };
+  }
+}
+
+message ProfileProperties {
+  string name = 1 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      example: "\"user\""
+    }
+  ];
+  bytes avatar = 2 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      example: "\"iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABFUlEQVR4AeyV7a7CIBBEe3z/d+69B7KAJAqYVv+QOO4HMDu7aPs4juP8JRTwX/93ny2gTOA8z+ObiEsvAoADSHkg+XCtlRwyp74oAqJ7k+FfbVtufVEEGEBWB/daawWeBFzd8Su+KK4tAiB3bRLQpN+BDpB8wLD4wJPvItRcxL0FTCUUASma+ALSv6XfardQifv1V/GyAIkgi7BoANaLy7UsIAp6GEhXoN/mjWcxLaAtALWwhaDG7T7XRpgWIBHUQsY94P16v994KADyfbt5BU4CGB4ZCggGGJN9sncowE6CeNXOnB0KsCjMd+9+AXNnpgRIeBe2gD2BPYE9gT2Bhy+MFj5yjXtrbhU9R8Qtz+1XYNF3+AMAAP//LiLZaAAAAAZJREFUAwBFN5PQ5zM7eQAAAABJRU5ErkJgggAA\""
+    }
+  ];
 }
 
 message Profile {
   string id = 1;
-  string name = 2;
-  bytes avatar = 3;
+  bool is_provisioned = 2;
+  ProfileProperties properties = 3;
 }
 
-message CreateRequest {
+message GetMyProfileRequest {
+};
+
+message GetMyProfileResponse {
   Profile porfile = 1;
 };
 
-message CreateResponse {
-  string id = 1;
+message UpdateMyProfileRequest {
+  ProfileProperties properties = 1;
 };
 
-message GetMeRequest {
-};
-
-message GetMeResponse {
-  Profile porfile = 1;
+message UpdateMyProfileResponse {
 };

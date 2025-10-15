@@ -19,16 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Profiles_Create_FullMethodName = "/profiles.Profiles/Create"
-	Profiles_GetMe_FullMethodName  = "/profiles.Profiles/GetMe"
+	Profiles_GetMyProfile_FullMethodName    = "/profiles.Profiles/GetMyProfile"
+	Profiles_UpdateMyProfile_FullMethodName = "/profiles.Profiles/UpdateMyProfile"
 )
 
 // ProfilesClient is the client API for Profiles service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProfilesClient interface {
-	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
-	GetMe(ctx context.Context, in *GetMeRequest, opts ...grpc.CallOption) (*GetMeResponse, error)
+	GetMyProfile(ctx context.Context, in *GetMyProfileRequest, opts ...grpc.CallOption) (*GetMyProfileResponse, error)
+	UpdateMyProfile(ctx context.Context, in *UpdateMyProfileRequest, opts ...grpc.CallOption) (*UpdateMyProfileResponse, error)
 }
 
 type profilesClient struct {
@@ -39,20 +39,20 @@ func NewProfilesClient(cc grpc.ClientConnInterface) ProfilesClient {
 	return &profilesClient{cc}
 }
 
-func (c *profilesClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error) {
+func (c *profilesClient) GetMyProfile(ctx context.Context, in *GetMyProfileRequest, opts ...grpc.CallOption) (*GetMyProfileResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateResponse)
-	err := c.cc.Invoke(ctx, Profiles_Create_FullMethodName, in, out, cOpts...)
+	out := new(GetMyProfileResponse)
+	err := c.cc.Invoke(ctx, Profiles_GetMyProfile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *profilesClient) GetMe(ctx context.Context, in *GetMeRequest, opts ...grpc.CallOption) (*GetMeResponse, error) {
+func (c *profilesClient) UpdateMyProfile(ctx context.Context, in *UpdateMyProfileRequest, opts ...grpc.CallOption) (*UpdateMyProfileResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetMeResponse)
-	err := c.cc.Invoke(ctx, Profiles_GetMe_FullMethodName, in, out, cOpts...)
+	out := new(UpdateMyProfileResponse)
+	err := c.cc.Invoke(ctx, Profiles_UpdateMyProfile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,8 +63,8 @@ func (c *profilesClient) GetMe(ctx context.Context, in *GetMeRequest, opts ...gr
 // All implementations must embed UnimplementedProfilesServer
 // for forward compatibility.
 type ProfilesServer interface {
-	Create(context.Context, *CreateRequest) (*CreateResponse, error)
-	GetMe(context.Context, *GetMeRequest) (*GetMeResponse, error)
+	GetMyProfile(context.Context, *GetMyProfileRequest) (*GetMyProfileResponse, error)
+	UpdateMyProfile(context.Context, *UpdateMyProfileRequest) (*UpdateMyProfileResponse, error)
 	mustEmbedUnimplementedProfilesServer()
 }
 
@@ -75,11 +75,11 @@ type ProfilesServer interface {
 // pointer dereference when methods are called.
 type UnimplementedProfilesServer struct{}
 
-func (UnimplementedProfilesServer) Create(context.Context, *CreateRequest) (*CreateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+func (UnimplementedProfilesServer) GetMyProfile(context.Context, *GetMyProfileRequest) (*GetMyProfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMyProfile not implemented")
 }
-func (UnimplementedProfilesServer) GetMe(context.Context, *GetMeRequest) (*GetMeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetMe not implemented")
+func (UnimplementedProfilesServer) UpdateMyProfile(context.Context, *UpdateMyProfileRequest) (*UpdateMyProfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMyProfile not implemented")
 }
 func (UnimplementedProfilesServer) mustEmbedUnimplementedProfilesServer() {}
 func (UnimplementedProfilesServer) testEmbeddedByValue()                  {}
@@ -102,38 +102,38 @@ func RegisterProfilesServer(s grpc.ServiceRegistrar, srv ProfilesServer) {
 	s.RegisterService(&Profiles_ServiceDesc, srv)
 }
 
-func _Profiles_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateRequest)
+func _Profiles_GetMyProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMyProfileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProfilesServer).Create(ctx, in)
+		return srv.(ProfilesServer).GetMyProfile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Profiles_Create_FullMethodName,
+		FullMethod: Profiles_GetMyProfile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProfilesServer).Create(ctx, req.(*CreateRequest))
+		return srv.(ProfilesServer).GetMyProfile(ctx, req.(*GetMyProfileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Profiles_GetMe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetMeRequest)
+func _Profiles_UpdateMyProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMyProfileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProfilesServer).GetMe(ctx, in)
+		return srv.(ProfilesServer).UpdateMyProfile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Profiles_GetMe_FullMethodName,
+		FullMethod: Profiles_UpdateMyProfile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProfilesServer).GetMe(ctx, req.(*GetMeRequest))
+		return srv.(ProfilesServer).UpdateMyProfile(ctx, req.(*UpdateMyProfileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -146,12 +146,12 @@ var Profiles_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ProfilesServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Create",
-			Handler:    _Profiles_Create_Handler,
+			MethodName: "GetMyProfile",
+			Handler:    _Profiles_GetMyProfile_Handler,
 		},
 		{
-			MethodName: "GetMe",
-			Handler:    _Profiles_GetMe_Handler,
+			MethodName: "UpdateMyProfile",
+			Handler:    _Profiles_UpdateMyProfile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -6,15 +6,14 @@ import (
 
 	"github.com/alexwatcher/gateofthings/profiles/internal/models"
 	profilesv1 "github.com/alexwatcher/gateofthings/protos/gen/go/profiles/v1"
-	"github.com/alexwatcher/gateofthings/shared/pkg/contextutils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type Profiles interface {
-	Create(ctx context.Context, profile *models.Profile) (id string, err error)
-	GetMe(ctx context.Context) (profile *models.Profile, err error)
+	UpdateMyProfile(ctx context.Context, properties *models.Profile) (id string, err error)
+	GetMyProfile(ctx context.Context) (profile *models.Profile, err error)
 }
 
 type serverAPI struct {
@@ -26,43 +25,39 @@ func Register(gRPC *grpc.Server, profiles Profiles) {
 	profilesv1.RegisterProfilesServer(gRPC, &serverAPI{profiles: profiles})
 }
 
-func (s *serverAPI) Create(ctx context.Context, in *profilesv1.CreateRequest) (*profilesv1.CreateResponse, error) {
-	// validate authentication
-	userId := contextutils.XUserIdFromContext(ctx)
-	if userId != in.Porfile.Id {
-		return nil, status.Error(codes.Unauthenticated, models.ErrUnauthenticated.Error())
+func (s *serverAPI) UpdateMyProfile(ctx context.Context, in *profilesv1.UpdateMyProfileRequest) (*profilesv1.UpdateMyProfileResponse, error) {
+	if in.Properties == nil {
+		return nil, status.Error(codes.Internal, models.ErrProfilePropertiesNotSpecified.Error())
 	}
 
-	//
-	profile := &models.Profile{
-		Id:     in.Porfile.Id,
-		Name:   in.Porfile.Name,
-		Avatar: in.Porfile.Avatar,
+	properties := &models.Profile{
+		Name:   in.Properties.Name,
+		Avatar: in.Properties.Avatar,
 	}
-	id, err := s.profiles.Create(ctx, profile)
+	_, err := s.profiles.UpdateMyProfile(ctx, properties)
 	if err != nil {
 		if errors.Is(err, models.ErrProfileAlreadyExists) {
 			return nil, status.Error(codes.AlreadyExists, err.Error())
 		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &profilesv1.CreateResponse{Id: id}, nil
+	return &profilesv1.UpdateMyProfileResponse{}, nil
 }
 
-func (s *serverAPI) GetMe(ctx context.Context, in *profilesv1.GetMeRequest) (*profilesv1.GetMeResponse, error) {
-	profile, err := s.profiles.GetMe(ctx)
+func (s *serverAPI) GetMyProfile(ctx context.Context, in *profilesv1.GetMyProfileRequest) (*profilesv1.GetMyProfileResponse, error) {
+	profile, err := s.profiles.GetMyProfile(ctx)
 	if err != nil {
-		if errors.Is(err, models.ErrProfileNotFound) {
-			return nil, status.Error(codes.NotFound, err.Error())
-		}
 		if errors.Is(err, models.ErrUnauthenticated) {
 			return nil, status.Error(codes.Unauthenticated, err.Error())
 		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &profilesv1.GetMeResponse{Porfile: &profilesv1.Profile{
-		Id:     profile.Id,
-		Name:   profile.Name,
-		Avatar: profile.Avatar,
+	return &profilesv1.GetMyProfileResponse{Porfile: &profilesv1.Profile{
+		Id:            profile.Id,
+		IsProvisioned: profile.IsProvisioned,
+		Properties: &profilesv1.ProfileProperties{
+			Name:   profile.Name,
+			Avatar: profile.Avatar,
+		},
 	}}, nil
 }

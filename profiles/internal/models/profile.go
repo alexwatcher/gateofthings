@@ -1,7 +1,8 @@
 package models
 
 type Profile struct {
-	Id     string
-	Name   string
-	Avatar []byte
+	Id            string
+	IsProvisioned bool
+	Name          string
+	Avatar        []byte
 }

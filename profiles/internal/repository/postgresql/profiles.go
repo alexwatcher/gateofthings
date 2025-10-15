@@ -20,12 +20,12 @@ func NewProfilesRepo(conn *pgx.Conn) *ProfilesRepo {
 	return &ProfilesRepo{conn: conn}
 }
 
-func (r *ProfilesRepo) Insert(ctx context.Context, profile *models.Profile) (string, error) {
+func (r *ProfilesRepo) Upsert(ctx context.Context, id string, profile *models.Profile) (string, error) {
 	op := "repository.profiles.Insert"
 	sql, args, err := spgsql.SqlBuilder.
 		Insert("user_profiles").
 		Columns("id", "name", "avatar").
-		Values(profile.Id, profile.Name, profile.Avatar).
+		Values(id, profile.Name, profile.Avatar).
 		ToSql()
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)
@@ -40,7 +40,7 @@ func (r *ProfilesRepo) Insert(ctx context.Context, profile *models.Profile) (str
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
-	return profile.Id, nil
+	return id, nil
 }
 
 func (r *ProfilesRepo) Get(ctx context.Context, id string) (*models.Profile, error) {

@@ -11,7 +11,7 @@ import (
 )
 
 type ProfilesRepo interface {
-	Insert(ctx context.Context, profile *models.Profile) (string, error)
+	Upsert(ctx context.Context, id string, profile *models.Profile) (string, error)
 	Get(ctx context.Context, id string) (*models.Profile, error)
 }
 
@@ -24,18 +24,18 @@ func NewProfiles(repo ProfilesRepo) *Profiles {
 	return &Profiles{repo: repo}
 }
 
-func (p *Profiles) Create(ctx context.Context, profile *models.Profile) (string, error) {
-	op := "profiles.create"
-	log := slog.With("op", op, "id", profile.Id, "name", profile.Name)
+func (p *Profiles) UpdateMyProfile(ctx context.Context, profile *models.Profile) (string, error) {
+	op := "profiles.updatemyprofile"
+	log := slog.With("op", op)
 
 	userId := contextutils.XUserIdFromContext(ctx)
-	if userId != profile.Id {
-		log.Error("x-user-id not equalt to requested user id")
+	if userId == "" {
+		log.Error("x-user-id not specified")
 		return "", fmt.Errorf("%s: %w", op, models.ErrUnauthenticated)
 	}
 
-	log.Info("create profile")
-	profileId, err := p.repo.Insert(ctx, profile)
+	log.Info("update profile")
+	profileId, err := p.repo.Upsert(ctx, userId, profile)
 	if err != nil {
 		if errors.Is(err, models.ErrProfileAlreadyExists) {
 			log.Error("profile already exists", "error", err)
@@ -48,8 +48,8 @@ func (p *Profiles) Create(ctx context.Context, profile *models.Profile) (string,
 	return profileId, nil
 }
 
-func (p *Profiles) GetMe(ctx context.Context) (*models.Profile, error) {
-	op := "profiles.getme"
+func (p *Profiles) GetMyProfile(ctx context.Context) (*models.Profile, error) {
+	op := "profiles.getmyprofile"
 	log := slog.With("op", op)
 
 	userId := contextutils.XUserIdFromContext(ctx)
@@ -62,12 +62,13 @@ func (p *Profiles) GetMe(ctx context.Context) (*models.Profile, error) {
 	profile, err := p.repo.Get(ctx, userId)
 	if err != nil {
 		if errors.Is(err, models.ErrProfileNotFound) {
-			log.Error("profile not found", "error", err)
-			return nil, fmt.Errorf("%s: %w", op, err)
+			log.Info("profile not found, return default")
+			return &models.Profile{Id: userId, IsProvisioned: false}, nil
 		}
 		log.Error("failed get profile", "error", err)
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 	log.Info("profile found")
+	profile.IsProvisioned = true
 	return profile, nil
 }
