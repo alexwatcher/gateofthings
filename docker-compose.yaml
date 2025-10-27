@@ -105,8 +105,16 @@ services:
             DB_USER: auth_user
             DB_PASSWORD: auth_pass
             DB_MIGRATIONS: ./migrations
+            HEALTH_PORT: 3000
         ports:
             - 50051:50051
+            - 3001:3000
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:3000/readyz"]
+            interval: 3s
+            timeout: 3s
+            retries: 3
+            start_period: 1s
         depends_on:
             postgres:
                 condition: service_healthy
@@ -132,6 +140,7 @@ services:
             DB_MIGRATIONS: ./migrations
         ports:
             - 50052:50051
+            - 3002:3000
         depends_on:
             postgres:
                 condition: service_healthy

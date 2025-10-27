@@ -14,6 +14,7 @@ type Config struct {
 	Telemetry   scfg.TelemetryConfig `envPrefix:"TELEMETRY_"`
 	GRPC        scfg.GRPCSrvConfig   `envPrefix:"GRPC_"`
 	Database    scfg.DatabaseConfig  `envPrefix:"DB_"`
+	HealthPort  uint16               `env:"HEALTH_PORT,required"`
 }
 
 // MustLoad loads configuration from environment variables into a Config instance.
