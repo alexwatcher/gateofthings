@@ -10,6 +10,7 @@ import (
 	"github.com/alexwatcher/gateofthings/profiles/internal/app"
 	"github.com/alexwatcher/gateofthings/profiles/internal/config"
 	"github.com/alexwatcher/gateofthings/profiles/internal/consts"
+	"github.com/alexwatcher/gateofthings/shared/pkg/healthz"
 	sharedpgsql "github.com/alexwatcher/gateofthings/shared/pkg/migrator/postgresql"
 	"github.com/alexwatcher/gateofthings/shared/pkg/telemetry"
 )
@@ -23,12 +24,20 @@ func main() {
 	telemetry.MustInitTracer(context.Background(), res, cfg.Telemetry.TraceEndpoint)
 	telemetry.MustInitMeter(context.Background(), res, cfg.Telemetry.MetricsEndpoint)
 
+	application := app.New(ctx, cfg.GRPC, cfg.Database)
+
+	hc := healthz.New(
+		healthz.WithPort(cfg.HealthPort),
+		healthz.WithLiveProbe(func(ctx context.Context) error { return nil }),
+		healthz.WithReadyProbe(func(ctx context.Context) error { return application.Ready() }),
+	)
+	go hc.MustRun(ctx)
+
 	slog.Info("start migration")
 	sharedpgsql.Migrate(cfg.Database)
 	slog.Info("end migration")
 
 	slog.Info("starting application")
-	application := app.New(ctx, cfg.GRPC, cfg.Database)
 	go application.MustRun(ctx)
 
 	stop := make(chan os.Signal, 1)

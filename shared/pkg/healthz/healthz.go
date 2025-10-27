@@ -2,6 +2,7 @@ package healthz
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -15,13 +16,16 @@ type Option interface {
 
 // HealthCheck represents a set of probes for Kubernetes health checks.
 type HealthCheck struct {
+	port  uint16
 	ready Probe
 	live  Probe
 }
 
 // New creates a new HealthCheck with the provided options.
 func New(options ...Option) *HealthCheck {
-	hc := &HealthCheck{}
+	hc := &HealthCheck{
+		port: 3000,
+	}
 	for _, o := range options {
 		o.apply(hc)
 	}
@@ -29,11 +33,11 @@ func New(options ...Option) *HealthCheck {
 }
 
 // Run starts an HTTP server exposing health endpoints for Kubernetes probes.
-func (c *HealthCheck) Run(ctx context.Context, addr string) error {
+func (c *HealthCheck) Run(ctx context.Context) error {
 	mux := http.NewServeMux()
-	c.Register(mux)
+	c.register(mux)
 
-	server := &http.Server{Addr: addr, Handler: mux}
+	server := &http.Server{Addr: fmt.Sprintf(":%d", c.port), Handler: mux}
 
 	// Gracefully shutdown when the context is canceled.
 	go func() {
@@ -46,15 +50,15 @@ func (c *HealthCheck) Run(ctx context.Context, addr string) error {
 
 // MustRun starts an HTTP server exposing health endpoints.
 // panic in case of error
-func (c *HealthCheck) MustRun(ctx context.Context, addr string) {
-	if err := c.Run(ctx, addr); err != nil {
+func (c *HealthCheck) MustRun(ctx context.Context) {
+	if err := c.Run(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // RegisterHandlers registers all health endpoints on the given ServeMux.
 // If nil is passed, handlers are registered on http.DefaultServeMux.
-func (c *HealthCheck) Register(mux *http.ServeMux) {
+func (c *HealthCheck) register(mux *http.ServeMux) {
 	if mux == nil {
 		mux = http.DefaultServeMux
 	}
@@ -75,21 +79,26 @@ func (c *HealthCheck) addHandler(mux *http.ServeMux, path string, probe Probe, o
 }
 
 // withProbeOption is a generic option type for applying probes.
-type withProbeOption struct {
-	setter func(*HealthCheck, Probe)
-	probe  Probe
+type withValueOption struct {
+	setter func(*HealthCheck, any)
+	value  any
 }
 
-func (o withProbeOption) apply(hc *HealthCheck) {
-	o.setter(hc, o.probe)
+func (o withValueOption) apply(hc *HealthCheck) {
+	o.setter(hc, o.value)
 }
 
 // WithReadyProbe sets the readiness probe.
 func WithReadyProbe(probe Probe) Option {
-	return withProbeOption{setter: func(h *HealthCheck, p Probe) { h.ready = p }, probe: probe}
+	return withValueOption{setter: func(h *HealthCheck, p any) { h.ready = p.(Probe) }, value: probe}
 }
 
 // WithLiveProbe sets the liveness probe.
 func WithLiveProbe(probe Probe) Option {
-	return withProbeOption{setter: func(h *HealthCheck, p Probe) { h.live = p }, probe: probe}
+	return withValueOption{setter: func(h *HealthCheck, p any) { h.live = p.(Probe) }, value: probe}
+}
+
+// WithPort sets port to run on http server.
+func WithPort(port uint16) Option {
+	return withValueOption{setter: func(h *HealthCheck, p any) { h.port = p.(uint16) }, value: port}
 }

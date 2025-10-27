@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -28,10 +27,11 @@ func main() {
 	application := app.New(ctx, cfg.GRPC, cfg.Database, cfg.TokenSecret, cfg.TokenTTL)
 
 	hc := healthz.New(
+		healthz.WithPort(cfg.HealthPort),
 		healthz.WithLiveProbe(func(ctx context.Context) error { return nil }),
 		healthz.WithReadyProbe(func(ctx context.Context) error { return application.Ready() }),
 	)
-	go hc.MustRun(ctx, fmt.Sprintf(":%d", cfg.HealthPort))
+	go hc.MustRun(ctx)
 
 	slog.Info("start migration")
 	sharedpgsql.Migrate(cfg.Database)

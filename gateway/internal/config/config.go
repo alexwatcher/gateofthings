@@ -13,6 +13,7 @@ type Config struct {
 	HTTP        scfg.HTTPSrvConfig   `envPrefix:"HTTP_"`
 	Auth        scfg.GRPCClnConfig   `envPrefix:"AUTH_"`
 	Profiles    scfg.GRPCClnConfig   `envPrefix:"PROFILES_"`
+	HealthPort  uint16               `env:"HEALTH_PORT,required"`
 }
 
 // MustLoad loads configuration from environment variables into a Config instance.
