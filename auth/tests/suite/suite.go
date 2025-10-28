@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -26,7 +27,9 @@ var cfg = &config.Config{
 	TokenTTL:    time.Minute * 10,
 	TokenSecret: "test",
 	Telemetry:   scfg.TelemetryConfig{},
-	GRPC:        scfg.GRPCSrvConfig{},
+	GRPC: scfg.GRPCSrvConfig{
+		Port: 50051,
+	},
 	Database: scfg.DatabaseConfig{
 		Host:       "postgres",
 		Port:       5432,
@@ -36,6 +39,7 @@ var cfg = &config.Config{
 		Password:   "pass",
 		Migrations: "./migrations",
 	},
+	HealthPort: 3000,
 }
 
 type Suite struct {
@@ -80,15 +84,20 @@ func New(t *testing.T) (context.Context, *Suite, func()) {
 		}
 	}()
 
-	dbRes := mustSetupPostgres(testName, pool, cfg, networkName)
+	dbRes, err := setupPostgres(testName, pool, cfg, networkName)
+	if err != nil {
+		fmt.Printf("Failed setup PostgreSQL: %v", err)
+		panic(err)
+	}
 	resources = append(resources, dbRes)
 
 	cfg.Database.Host = strings.TrimPrefix(dbRes.Container.Name, "/")
-	authRes, port := mustSetupAuth(testName, pool, cfg, networkName)
+	authRes, port := mustSetupAuth(testName, pool, cfg, networkName, time.Second*20)
 	resources = append(resources, authRes)
 
 	cc, err := grpc.NewClient(fmt.Sprintf("localhost:%d", port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
+		fmt.Printf("Failed create grpc client: %v", err)
 		panic(err)
 	}
 
@@ -111,7 +120,7 @@ func New(t *testing.T) (context.Context, *Suite, func()) {
 	}
 }
 
-func mustSetupPostgres(testName string, pool *dockertest.Pool, cfg *config.Config, network string) *dockertest.Resource {
+func setupPostgres(testName string, pool *dockertest.Pool, cfg *config.Config, network string) (*dockertest.Resource, error) {
 	res, err := pool.RunWithOptions(&dockertest.RunOptions{
 		Repository: "postgres",
 		Tag:        "17.5",
@@ -124,7 +133,7 @@ func mustSetupPostgres(testName string, pool *dockertest.Pool, cfg *config.Confi
 		},
 	})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	err = pool.Retry(func() error {
@@ -138,15 +147,15 @@ func mustSetupPostgres(testName string, pool *dockertest.Pool, cfg *config.Confi
 		return nil
 	})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return res
+	return res, nil
 }
 
-func mustSetupAuth(testName string, pool *dockertest.Pool, cfg *config.Config, network string) (*dockertest.Resource, uint16) {
-	port := 3000
-	exposedPort := fmt.Sprintf("%d/tcp", port)
+func mustSetupAuth(testName string, pool *dockertest.Pool, cfg *config.Config, network string, setupTimeout time.Duration) (*dockertest.Resource, uint16) {
+	exposedPort := fmt.Sprintf("%d/tcp", cfg.GRPC.Port)
+	exposedHealthPort := fmt.Sprintf("%d/tcp", cfg.HealthPort)
 	res, err := pool.RunWithOptions(&dockertest.RunOptions{
 		Repository: "got-auth",
 		Tag:        "latest",
@@ -156,34 +165,67 @@ func mustSetupAuth(testName string, pool *dockertest.Pool, cfg *config.Config, n
 			fmt.Sprintf("ENV=%s", cfg.Env),
 			fmt.Sprintf("TOKEN_TTL=%v", cfg.TokenTTL),
 			fmt.Sprintf("TOKEN_SECRET=%s", cfg.TokenSecret),
-			fmt.Sprintf("GRPC_PORT=%d", port),
+			fmt.Sprintf("GRPC_PORT=%d", cfg.GRPC.Port),
 			fmt.Sprintf("DB_HOST=%s", cfg.Database.Host),
 			fmt.Sprintf("DB_PORT=%d", cfg.Database.Port),
 			fmt.Sprintf("DB_NAME=%s", cfg.Database.Name),
 			fmt.Sprintf("DB_USER=%s", cfg.Database.User),
 			fmt.Sprintf("DB_PASSWORD=%s", cfg.Database.Password),
 			fmt.Sprintf("DB_MIGRATIONS=%s", cfg.Database.Migrations),
+			fmt.Sprintf("HEALTH_PORT=%d", cfg.HealthPort),
 		},
-		ExposedPorts: []string{exposedPort},
+		ExposedPorts: []string{exposedPort, exposedHealthPort},
 	}, func(config *docker.HostConfig) {
 		config.PortBindings = map[docker.Port][]docker.PortBinding{
-			docker.Port(exposedPort): {{HostIP: "0.0.0.0", HostPort: ""}},
+			docker.Port(exposedPort):       {{HostIP: "0.0.0.0", HostPort: ""}},
+			docker.Port(exposedHealthPort): {{HostIP: "0.0.0.0", HostPort: ""}},
 		}
 	})
 	if err != nil {
 		panic(err)
 	}
 
-	hostPort, err := strconv.Atoi(res.GetPort(exposedPort))
-	if err != nil {
+	cleanup := func() {
 		if err := pool.Purge(res); err != nil {
 			log.Printf("Could not purge container: %s", err)
 		}
+	}
+
+	hostPort, err := strconv.Atoi(res.GetPort(exposedPort))
+	if err != nil {
+		cleanup()
 		panic(err)
 	}
 
-	// TODO: implement and then use healthcheck to wait availability of auth service
-	time.Sleep(time.Second * 5)
+	healthHostPort, err := strconv.Atoi(res.GetPort(exposedHealthPort))
+	if err != nil {
+		cleanup()
+		panic(err)
+	}
+
+	err = waitHealthCheck(fmt.Sprintf("http://localhost:%d/readyz", healthHostPort), setupTimeout)
+	if err != nil {
+		cleanup()
+		panic(err)
+	}
 
 	return res, uint16(hostPort)
+}
+
+func waitHealthCheck(address string, timeout time.Duration) error {
+	startTime := time.Now()
+	for {
+		resp, err := http.Get(address)
+		if err != nil {
+			continue
+		}
+		if time.Since(startTime) > timeout {
+			return fmt.Errorf("%s healthcheck timeout", address)
+		}
+		if resp.StatusCode == http.StatusOK {
+			break
+		}
+		time.Sleep(time.Millisecond * 500)
+	}
+	return nil
 }
