@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"sync/atomic"
 
 	grpcinterceptors "github.com/alexwatcher/gateofthings/gateway/internal/grpc/interceptors"
 	grpcoptions "github.com/alexwatcher/gateofthings/gateway/internal/grpc/options"
@@ -25,6 +26,7 @@ type App struct {
 	tokenSecret    string
 	openAPI        string
 	server         *http.Server
+	isRunning      int32
 }
 
 func New(ctx context.Context, httpConfig config.HTTPSrvConfig, authConfig config.GRPCClnConfig, profilesConfig config.GRPCClnConfig, tokenSecret string, openAPI string) *App {
@@ -74,6 +76,8 @@ func (a *App) Run(ctx context.Context) error {
 		return fmt.Errorf("app.run: register openapi endpoint: %w", err)
 	}
 
+	atomic.StoreInt32(&a.isRunning, 1)
+	defer atomic.StoreInt32(&a.isRunning, 0)
 	slog.Info("HTTP server started", "port", a.httpConfig.Port)
 	a.server = &http.Server{Addr: fmt.Sprintf(":%d", a.httpConfig.Port), Handler: mux}
 	if err := a.server.ListenAndServe(); err != nil && err != context.Canceled {
@@ -87,4 +91,13 @@ func (a *App) Run(ctx context.Context) error {
 func (a *App) Stop(ctx context.Context) {
 	slog.Info("stopping HTTP server")
 	a.server.Shutdown(ctx)
+}
+
+// Readiness probe
+func (a *App) Ready() error {
+	if atomic.LoadInt32(&a.isRunning) == 0 {
+		slog.Warn("app: live probe failed: app is not running")
+		return fmt.Errorf("app: is not running")
+	}
+	return nil
 }

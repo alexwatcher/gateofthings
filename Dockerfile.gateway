@@ -21,7 +21,7 @@ RUN go build -o ./gateway/gateway ./gateway/cmd/gateway/main.go
 
 FROM alpine:3.22.1
 
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates curl
 
 WORKDIR /app
 
@@ -29,5 +29,6 @@ COPY --from=builder /app/gateway/gateway .
 COPY protos/gen/swagger ./swagger
 
 EXPOSE 8080
+EXPOSE 3000
 
 CMD ["./gateway"]

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net"
+	"sync/atomic"
 
 	grpcprofiles "github.com/alexwatcher/gateofthings/profiles/internal/grpc/profiles"
 	"github.com/alexwatcher/gateofthings/profiles/internal/repository/postgresql"
@@ -14,12 +15,15 @@ import (
 	"github.com/alexwatcher/gateofthings/shared/pkg/grpc/interceptors/tracing"
 	"github.com/alexwatcher/gateofthings/shared/pkg/grpc/interceptors/valid"
 	sharedpgsql "github.com/alexwatcher/gateofthings/shared/pkg/repository/postgresql"
+	"github.com/jackc/pgx/v5"
 	"google.golang.org/grpc"
 )
 
 type App struct {
 	gRPCServer *grpc.Server
 	gRPConfig  config.GRPCSrvConfig
+	dbConn     *pgx.Conn
+	isRunning  int32
 }
 
 // New initializes a new instance of the App struct with a gRPC server
@@ -46,6 +50,7 @@ func New(ctx context.Context, gRPConfig config.GRPCSrvConfig, dbConfig config.Da
 	return &App{
 		gRPCServer: gRPCServer,
 		gRPConfig:  gRPConfig,
+		dbConn:     dbConn,
 	}
 }
 
@@ -63,6 +68,8 @@ func (a *App) Run(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	atomic.StoreInt32(&a.isRunning, 1)
+	defer atomic.StoreInt32(&a.isRunning, 0)
 	slog.Info("gRPC server started", "port", a.gRPConfig.Port)
 	if err := a.gRPCServer.Serve(lis); err != nil {
 		return fmt.Errorf("app.run: %w", err)
@@ -75,4 +82,18 @@ func (a *App) Run(ctx context.Context) error {
 func (a *App) Stop(ctx context.Context) {
 	slog.Info("stopping gRPC server")
 	a.gRPCServer.GracefulStop()
+}
+
+// Readiness probe
+func (a *App) Ready() error {
+	err := a.dbConn.Ping(context.Background())
+	if err != nil {
+		slog.Warn("app: live probe failed", "error", err)
+		return err
+	}
+	if atomic.LoadInt32(&a.isRunning) == 0 {
+		slog.Warn("app: live probe failed: app is not running")
+		return fmt.Errorf("app: is not running")
+	}
+	return nil
 }
